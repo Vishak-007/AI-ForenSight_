@@ -6,3 +6,7 @@ faster-whisper
 easyocr
 imageio-ffmpeg
 Pillow
+xmltodict
+pypdf
+pytesseract
+pymupdf
