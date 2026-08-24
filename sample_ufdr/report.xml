@@ -81,5 +81,11 @@
       <filename>media/doc_003.png</filename>
       <timestamp>2025-03-02T09:10:00</timestamp>
     </media_item>
+    <media_item>
+      <id>MED007</id>
+      <type>video</type>
+      <filename>media/video.mp4</filename>
+      <timestamp>2025-03-02T12:00:00</timestamp>
+    </media_item>
   </media>
 </ufdr_report>
