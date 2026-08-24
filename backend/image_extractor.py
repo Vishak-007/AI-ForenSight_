@@ -240,9 +240,8 @@ class EvidenceTagger:
     @classmethod
     def classify(cls, image_path):
         """Returns {label: confidence} for every label in EVIDENCE_LABELS."""
-        import torch
-
         try:
+            import torch
             model, processor = cls._load()
 
             image = Image.open(image_path).convert("RGB")
