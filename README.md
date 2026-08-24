@@ -1,15 +1,18 @@
-# AI-ForenSight: UFDR Parser & OCR Transcription Pipeline
+# AI-ForenSight: Multimedia Forensic Video Analysis Pipeline
 
-AI-ForenSight provides local, offline forensic parsing and automated text extraction from UFDR (Universal Forensic Data Extraction) packages.
+AI-ForenSight provides local, offline forensic video analysis, keyframe extraction, scene contextual classification, spoken dialogue transcription, and visual object/text extraction from digital evidence packages.
 
 ---
 
 ## Features
 
-- **UFDR Data Parsing (`parser.py`)**: Normalizes messages, contacts, calls, and media items from `report.xml`.
-- **Evidentiary Integrity**: Computes SHA-256 hashes for all media files to detect tampering.
-- **Media Metadata Extraction**: Extracts format, dimensions, duration, and sampling rate for image, audio, and PDF media.
-- **Local Document OCR (`ocr_transcribe.py`)**: Uses Tesseract OCR and PyMuPDF to extract text from image documents (`.png`, `.jpg`) and PDF documents page-by-page.
+- **Forensic Video Metadata**: Extracts SHA-256 hash, duration, resolution, aspect ratio, frame rate, total frames, FourCC codec, and audio stream detection.
+- **Audio Extraction & Dialogue Transcription**: Extracts normalized audio tracks and utilizes **Faster-Whisper** to transcribe spoken dialogue with sub-second timestamps and language detection.
+- **Keyframe Extraction & Visual Object Detection**: Uses **YOLOv8** to detect and classify visual entities (people, vehicles, electronics, phones, etc.) across sampled keyframes with bounding boxes and confidence scores.
+- **On-Screen OCR Text Extraction**: Uses **EasyOCR** to extract visible textual content from screen recordings, signs, banners, and documents within video frames.
+- **Contextual Scene & Activity Classification**: Automatically infers scene context (e.g., *Screen Capture: Programming/Terminal Session*, *Screen Capture: Web Browsing*, *Surveillance/Outdoor Scene*, *Physical Real-World Scene*).
+- **Unified Chronological Timeline**: Fuses audio speech events and visual frame activities into an ordered forensic event timeline.
+- **Executive Forensic Summary**: Generates structured forensic summaries suitable for investigative reporting.
 
 ---
 
@@ -20,25 +23,32 @@ AI-ForenSight provides local, offline forensic parsing and automated text extrac
    pip install -r requirements.txt
    ```
 
-2. **Install Tesseract OCR (Windows):**
-   - Download Tesseract OCR installer for Windows and install to default path (`C:\Program Files\Tesseract-OCR\tesseract.exe`).
-
 ---
 
 ## Pipeline Usage
 
-### Step 1: Parse UFDR Export
-Run the UFDR XML parser to validate evidentiary hashes and normalize structure:
-```bash
-python parser.py
-```
-* **Input:** `sample_ufdr/report.xml` and media files under `sample_ufdr/media/`
-* **Output:** `parsed_output.json`
+### Run Video Analysis
+Analyze any forensic video file (e.g. `sample_ufdr/media/video.mp4`):
 
-### Step 2: Perform Document OCR
-Transcribe document entries extracted during parsing:
 ```bash
-python ocr_transcribe.py
+python process_video.py sample_ufdr/media/video.mp4 video_analysis_output.json
 ```
-* **Input:** `parsed_output.json`
-* **Output:** `ocr_output.json`
+
+### CLI Arguments
+- `video_path`: Path to input video file (e.g., `sample_ufdr/media/video.mp4`).
+- `-o, --output`: Path to output JSON analysis file (default: `<video_name>_analysis.json`).
+- `--sample_fps`: Frames per second to sample for visual detection and OCR (default: `1.0`).
+- `--whisper_model`: Whisper model size (`tiny`, `base`, `small`, `medium`, `large-v3`, default: `base`).
+- `--yolo_model`: YOLO model weights (default: `yolov8n.pt`).
+- `--no_keyframes`: Flag to disable saving snapshot images to disk.
+
+---
+
+## Output Schema
+The generated JSON report contains:
+- `video_metadata`: Technical & integrity metadata (SHA-256, duration, dimensions, codecs).
+- `video_summary`: Executive forensic summary and key metrics.
+- `scene_and_context`: Contextual classification and inferred activity.
+- `unified_chronological_timeline`: Integrated speech + visual event sequence.
+- `audio_transcription`: Full transcript and timestamped speech segments.
+- `visual_and_ocr_analysis`: Detected objects, bounding boxes, and OCR text per keyframe.
