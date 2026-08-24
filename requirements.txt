@@ -1,0 +1,8 @@
+opencv-python
+numpy
+torch
+ultralytics
+faster-whisper
+easyocr
+imageio-ffmpeg
+Pillow
