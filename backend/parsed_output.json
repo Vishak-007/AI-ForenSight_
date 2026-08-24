@@ -1,0 +1,138 @@
+{
+  "device_info": {
+    "device_id": "DEV001",
+    "imei": "359268100000123",
+    "extraction_date": "2025-03-01T09:00:00"
+  },
+  "messages": [
+    {
+      "id": "M001",
+      "sender": "+911234567890",
+      "receiver": "+919876543210",
+      "timestamp": "2025-03-01T20:14:00",
+      "text": "Call me tonight, don't message here again"
+    },
+    {
+      "id": "M002",
+      "sender": "+919876543210",
+      "receiver": "+911234567890",
+      "timestamp": "2025-03-01T20:16:00",
+      "text": "Ok. Sending the photo now"
+    }
+  ],
+  "calls": [
+    {
+      "id": "C001",
+      "caller": "+911234567890",
+      "callee": "+919876543210",
+      "timestamp": "2025-03-01T21:00:00",
+      "duration_seconds": "184",
+      "type": "outgoing"
+    }
+  ],
+  "contacts": [
+    {
+      "id": "CT001",
+      "name": "Rahul Sharma",
+      "phone": "+919876543210"
+    }
+  ],
+  "media": [
+    {
+      "id": "MED001",
+      "type": "image",
+      "timestamp": "2025-03-01T20:20:00",
+      "filename": "media/img_001.jpg",
+      "associated_message_id": "M002",
+      "associated_call_id": null,
+      "sha256": "22e7ccf27b1609d58451df0822572f08b5038f29a27ff3d44552453f79010e3d",
+      "file_size_bytes": 4315,
+      "metadata": {
+        "width": 320,
+        "height": 240,
+        "format": "JPEG"
+      },
+      "status": "PARSED"
+    },
+    {
+      "id": "MED002",
+      "type": "audio",
+      "timestamp": "2025-03-01T22:00:00",
+      "filename": "media/aud_001.wav",
+      "associated_message_id": null,
+      "associated_call_id": "C001",
+      "sha256": "b67e9ec72821ac485351fa70568bdbb1b3bd84b582e2c5806fb1735d5fae57c1",
+      "file_size_bytes": 32044,
+      "metadata": {
+        "duration_seconds": 2.0,
+        "channels": 1,
+        "sample_rate": 8000
+      },
+      "status": "PARSED"
+    },
+    {
+      "id": "MED003",
+      "type": "image",
+      "timestamp": "2025-03-02T11:05:00",
+      "filename": "media/img_002.jpg",
+      "associated_message_id": null,
+      "associated_call_id": null,
+      "sha256": "36b23a5a835f82ebb66f3f1d216fb81ed6b862f8ef131827fa51a47ff838a93f",
+      "file_size_bytes": 122977,
+      "metadata": {
+        "width": 960,
+        "height": 640,
+        "format": "JPEG"
+      },
+      "status": "PARSED"
+    },
+    {
+      "id": "MED006",
+      "type": "document",
+      "timestamp": "2025-03-02T09:00:00",
+      "filename": "media/doc_001.png",
+      "associated_message_id": null,
+      "associated_call_id": null,
+      "sha256": "f9e3cb12aef9772c20864379447fa040aec22f59930821e05833141b939264aa",
+      "file_size_bytes": 17671,
+      "metadata": {
+        "width": 500,
+        "height": 260,
+        "format": "PNG",
+        "ext": "png"
+      },
+      "status": "PARSED"
+    },
+    {
+      "id": "MED004",
+      "type": "document",
+      "timestamp": "2025-03-02T09:05:00",
+      "filename": "media/doc_002.pdf",
+      "associated_message_id": null,
+      "associated_call_id": null,
+      "sha256": "641b9784405a7ec8fca2af4d27e36fc2950ac3d6f030785c9e31d7d546fc47aa",
+      "file_size_bytes": 15310,
+      "metadata": {
+        "ext": "pdf"
+      },
+      "status": "PARSED"
+    },
+    {
+      "id": "MED005",
+      "type": "document",
+      "timestamp": "2025-03-02T09:10:00",
+      "filename": "media/doc_003.png",
+      "associated_message_id": null,
+      "associated_call_id": null,
+      "sha256": "98015aecd84d45269b8c671c36c86c06308b948a5e83d9fb15c35c2012f7e90e",
+      "file_size_bytes": 40163,
+      "metadata": {
+        "width": 640,
+        "height": 448,
+        "format": "PNG",
+        "ext": "png"
+      },
+      "status": "PARSED"
+    }
+  ]
+}
