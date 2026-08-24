@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Loader2, CheckCircle2, RotateCcw } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -27,6 +28,7 @@ export const Route = createFileRoute("/_shell/upload")({
 });
 
 function UploadPage() {
+  const [caseNameInput, setCaseNameInput] = useState("Step 5C Test Case");
   const {
     upload,
     uploading,
@@ -70,7 +72,23 @@ function UploadPage() {
               Upload a UFDR extraction file to begin forensic analysis. The file is processed by the
               forensic analysis service — no evidence is analysed in the browser.
             </p>
-            <UploadDropzone onFile={uploadFile} disabled={uploading} />
+
+            <div className="mb-4">
+              <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-foreground">
+                Forensic Case Name
+              </label>
+              <input
+                type="text"
+                value={caseNameInput}
+                onChange={(e) => setCaseNameInput(e.target.value)}
+                placeholder="Enter forensic case name..."
+                disabled={uploading}
+                className="w-full rounded-lg border border-border bg-card px-3.5 py-2.5 text-sm text-foreground focus:border-brand-accent focus:outline-none disabled:opacity-50"
+              />
+            </div>
+
+            <UploadDropzone onFile={(f) => uploadFile(f, caseNameInput)} disabled={uploading} />
+
             {uploading && (
               <div className="mt-4">
                 <div className="flex items-center gap-2 text-sm font-semibold text-foreground">

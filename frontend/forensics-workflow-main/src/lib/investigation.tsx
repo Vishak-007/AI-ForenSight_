@@ -32,6 +32,8 @@ export interface InvestigationState {
   stages: AnalysisStage[];
   statusMessage: string;
   error: string | null;
+  /** Active PostgreSQL Case ID selected by user or newly processed */
+  activeCaseId: number | null;
   /** report_data.json assembled by the backend, null until analysis completes. */
   reportData: ReportData | null;
   startedAt: string | null;
@@ -39,9 +41,10 @@ export interface InvestigationState {
 }
 
 interface InvestigationApi extends InvestigationState {
-  uploadFile: (file: File) => Promise<void>;
+  uploadFile: (file: File, caseName?: string) => Promise<void>;
   clearFile: () => void;
   beginAnalysis: () => Promise<void>;
+  selectCase: (caseId: number) => void;
   reset: () => void;
   clearError: () => void;
 }
@@ -59,10 +62,12 @@ const initialState: InvestigationState = {
   stages: pendingStages(),
   statusMessage: "",
   error: null,
+  activeCaseId: 1, // Default active case ID (Case #1)
   reportData: null,
   startedAt: null,
   completedAt: null,
 };
+
 
 const InvestigationContext = createContext<InvestigationApi | null>(null);
 
@@ -84,7 +89,6 @@ export function InvestigationProvider({ children }: { children: ReactNode }) {
           ...prev,
           ...saved,
           uploading: false,
-          // a reload cannot resume an in-flight pipeline
           analysisState: saved.analysisState === "running" ? "idle" : (saved.analysisState ?? "idle"),
           stages: saved.stages?.length ? saved.stages : pendingStages(),
         }));
@@ -100,6 +104,7 @@ export function InvestigationProvider({ children }: { children: ReactNode }) {
         STORAGE_KEY,
         JSON.stringify({
           upload: state.upload,
+          activeCaseId: state.activeCaseId,
           analysisId: state.analysisId,
           analysisState: state.analysisState,
           progress: state.progress,
@@ -108,9 +113,10 @@ export function InvestigationProvider({ children }: { children: ReactNode }) {
           startedAt: state.startedAt,
           completedAt: state.completedAt,
         }),
+
       );
     } catch {
-      /* storage full / unavailable — state simply is not persisted */
+      /* storage full / unavailable */
     }
   }, [state]);
 
@@ -125,10 +131,10 @@ export function InvestigationProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => stopPolling, [stopPolling]);
 
-  const uploadFile = useCallback(async (file: File) => {
+  const uploadFile = useCallback(async (file: File, caseName?: string) => {
     setState((s) => ({ ...s, uploading: true, uploadProgress: 0, error: null }));
     try {
-      const result = await uploadUFDR(file, (p) =>
+      const result = await uploadUFDR(file, caseName, (p) =>
         setState((s) => ({ ...s, uploadProgress: p })),
       );
       setState({
@@ -158,8 +164,8 @@ export function InvestigationProvider({ children }: { children: ReactNode }) {
   const clearError = useCallback(() => setState((s) => ({ ...s, error: null })), []);
 
   const beginAnalysis = useCallback(async () => {
-    const caseId = uploadRef.current?.caseId ?? null;
-    if (!caseId) {
+    const jobId = uploadRef.current?.jobId ?? uploadRef.current?.caseId ?? null;
+    if (!jobId) {
       setState((s) => ({ ...s, error: "Upload a UFDR case file before starting analysis." }));
       return;
     }
@@ -170,16 +176,17 @@ export function InvestigationProvider({ children }: { children: ReactNode }) {
       analysisState: "running",
       progress: 0,
       stages: pendingStages(),
-      statusMessage: "Analysis is running…",
+      statusMessage: "Processing UFDR extraction pipeline in background...",
       startedAt: new Date().toISOString(),
       reportData: null,
       completedAt: null,
     }));
 
     try {
-      const { analysisId } = await startAnalysis(caseId);
+      const { analysisId } = await startAnalysis(jobId);
       setState((s) => ({ ...s, analysisId }));
 
+      // Poll status every 2 seconds
       timer.current = setInterval(async () => {
         try {
           const status = await getAnalysisStatus(analysisId);
@@ -189,16 +196,25 @@ export function InvestigationProvider({ children }: { children: ReactNode }) {
             stages: status.stages,
             statusMessage: status.message,
           }));
+
           if (status.state === "completed") {
             stopPolling();
-            const data = await getReportData(caseId);
             setState((s) => ({
               ...s,
               analysisState: "completed",
               progress: 100,
               statusMessage: "Analysis complete.",
-              reportData: data,
               completedAt: new Date().toISOString(),
+            }));
+          } else if (status.state === "failed") {
+            stopPolling();
+            setState((s) => ({
+              ...s,
+              analysisState: "failed",
+              stages: s.stages.map((st) =>
+                st.state === "processing" ? { ...st, state: "failed" } : st,
+              ),
+              error: status.error || "The forensic analysis pipeline execution failed.",
             }));
           }
         } catch (err) {
@@ -206,16 +222,13 @@ export function InvestigationProvider({ children }: { children: ReactNode }) {
           setState((s) => ({
             ...s,
             analysisState: "failed",
-            stages: s.stages.map((st) =>
-              st.state === "processing" ? { ...st, state: "failed" } : st,
-            ),
             error: message(
               err,
-              "The forensic analysis could not be completed. Please review the analysis status and try again.",
+              "The forensic analysis could not be completed. Please review analysis status and try again.",
             ),
           }));
         }
-      }, 600);
+      }, 2000);
     } catch (err) {
       stopPolling();
       setState((s) => ({
@@ -229,13 +242,19 @@ export function InvestigationProvider({ children }: { children: ReactNode }) {
     }
   }, [stopPolling]);
 
+
+  const selectCase = useCallback((caseId: number) => {
+    setState((s) => ({ ...s, activeCaseId: caseId }));
+  }, []);
+
   const value = useMemo<InvestigationApi>(
-    () => ({ ...state, uploadFile, clearFile, beginAnalysis, reset, clearError }),
-    [state, uploadFile, clearFile, beginAnalysis, reset, clearError],
+    () => ({ ...state, uploadFile, clearFile, beginAnalysis, selectCase, reset, clearError }),
+    [state, uploadFile, clearFile, beginAnalysis, selectCase, reset, clearError],
   );
 
   return <InvestigationContext.Provider value={value}>{children}</InvestigationContext.Provider>;
 }
+
 
 export function useInvestigation(): InvestigationApi {
   const ctx = useContext(InvestigationContext);

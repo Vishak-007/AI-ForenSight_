@@ -17,7 +17,7 @@ export function UploadDropzone({
   const handle = (file: File | undefined) => {
     if (!file) return;
     if (!isValidUfdrFile(file)) {
-      setLocalError("Invalid file — please upload a valid UFDR file (.ufdr).");
+      setLocalError("Invalid file — please upload a valid UFDR archive (.zip or .ufdr).");
       return;
     }
     setLocalError(null);
@@ -61,20 +61,21 @@ export function UploadDropzone({
         <span className="label-caps mt-4 block text-foreground">Drop UFDR file here</span>
         <span className="mt-1 block text-sm text-muted-foreground">or click Browse Files</span>
         <span className="mt-3 inline-flex items-center rounded-md border border-border bg-muted px-2 py-1 font-mono text-[11px] text-muted-foreground">
-          Supported format: .UFDR
+          Supported formats: .ZIP, .UFDR
         </span>
       </div>
 
       <input
         ref={inputRef}
         type="file"
-        accept=".ufdr"
+        accept=".zip,.ufdr"
         className="hidden"
         onChange={(e) => {
           handle(e.target.files?.[0]);
           e.target.value = "";
         }}
       />
+
 
       {localError && (
         <p
