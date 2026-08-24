@@ -264,7 +264,7 @@ class EvidenceTagger:
             return {}
 
 
-# ---- Context (lightweight heuristics, no generative captioning) ----------
+# Context (lightweight heuristics, no generative captioning)
 
 _COLOR_NAMES = ["red", "green", "blue"]
 
@@ -318,7 +318,7 @@ def build_heuristic_context(image_path, metadata, face_count):
     )
 
 
-# ---- Pipeline -------------------------------------------------------------
+# Pipeline
 
 def analyze_all(image_records):
     analyses = []
