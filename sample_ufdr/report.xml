@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ufdr_report>
+  <device_info>
+    <device_id>DEV001</device_id>
+    <imei>359268100000123</imei>
+    <extraction_date>2025-03-01T09:00:00</extraction_date>
+  </device_info>
+
+  <messages>
+    <message>
+      <id>M001</id>
+      <sender>+911234567890</sender>
+      <receiver>+919876543210</receiver>
+      <timestamp>2025-03-01T20:14:00</timestamp>
+      <text>Call me tonight, don't message here again</text>
+    </message>
+    <message>
+      <id>M002</id>
+      <sender>+919876543210</sender>
+      <receiver>+911234567890</receiver>
+      <timestamp>2025-03-01T20:16:00</timestamp>
+      <text>Ok. Sending the photo now</text>
+    </message>
+  </messages>
+
+  <calls>
+    <call>
+      <id>C001</id>
+      <caller>+911234567890</caller>
+      <callee>+919876543210</callee>
+      <timestamp>2025-03-01T21:00:00</timestamp>
+      <duration_seconds>184</duration_seconds>
+      <type>outgoing</type>
+    </call>
+  </calls>
+
+  <contacts>
+    <contact>
+      <id>CT001</id>
+      <name>Rahul Sharma</name>
+      <phone>+919876543210</phone>
+    </contact>
+  </contacts>
+
+  <media>
+    <media_item>
+      <id>MED001</id>
+      <type>image</type>
+      <filename>media/img_001.jpg</filename>
+      <timestamp>2025-03-01T20:20:00</timestamp>
+      <associated_message_id>M002</associated_message_id>
+    </media_item>
+    <media_item>
+      <id>MED002</id>
+      <type>audio</type>
+      <filename>media/aud_001.wav</filename>
+      <timestamp>2025-03-01T22:00:00</timestamp>
+      <associated_call_id>C001</associated_call_id>
+    </media_item>
+    <media_item>
+      <id>MED003</id>
+      <type>image</type>
+      <filename>media/img_002.jpg</filename>
+      <timestamp>2025-03-02T11:05:00</timestamp>
+    </media_item>
+    <media_item>
+      <id>MED006</id>
+      <type>document</type>
+      <filename>media/doc_001.png</filename>
+      <timestamp>2025-03-02T09:00:00</timestamp>
+    </media_item>
+    <media_item>
+      <id>MED004</id>
+      <type>document</type>
+      <filename>media/doc_002.pdf</filename>
+      <timestamp>2025-03-02T09:05:00</timestamp>
+    </media_item>
+    <media_item>
+      <id>MED005</id>
+      <type>document</type>
+      <filename>media/doc_003.png</filename>
+      <timestamp>2025-03-02T09:10:00</timestamp>
+    </media_item>
+    <media_item>
+      <id>MED007</id>
+      <type>video</type>
+      <filename>media/video.mp4</filename>
+      <timestamp>2025-03-02T12:00:00</timestamp>
+    </media_item>
+  </media>
+</ufdr_report>
