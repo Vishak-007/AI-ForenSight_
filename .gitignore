@@ -39,3 +39,4 @@ temp_*.wav
 .idea/
 .DS_Store
 Thumbs.db
+models/
