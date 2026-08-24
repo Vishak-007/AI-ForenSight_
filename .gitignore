@@ -22,6 +22,10 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+.pytest_cache/
+
+# Claude Code
+.claude/
 
 # Model weights & large binaries
 *.pt

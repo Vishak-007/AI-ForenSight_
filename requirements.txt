@@ -18,3 +18,11 @@ easyocr
 imageio-ffmpeg
 qdrant-client
 sentence-transformers==3.0.1
+
+# Tanglish -> English translation pipeline (translate.py / translation/)
+wordfreq
+symspellpy
+spacy
+indic_transliteration
+sentencepiece
+pytest
