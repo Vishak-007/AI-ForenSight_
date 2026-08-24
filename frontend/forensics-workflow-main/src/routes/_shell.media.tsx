@@ -1,12 +1,26 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { ImageIcon, AudioLines, ImageOff } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { ImageIcon, AudioLines, ImageOff, FolderGit2, Loader2, AlertTriangle, FileText, Layers } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Panel, RecordId, SectionLabel } from "@/components/forensics/primitives";
 import { TimelineItem } from "@/components/forensics/TimelineItem";
 import { useReport } from "@/lib/use-report";
-import { formatTimestamp, text } from "@/lib/report-types";
+import { useInvestigation } from "@/lib/investigation";
+import { formatTimestamp, text, type TimelineRecord } from "@/lib/report-types";
 import { cn } from "@/lib/utils";
+import {
+  getMedia,
+  getOcrResults,
+  getTranscriptions,
+  getImageAnalysis,
+  getImageTags,
+  formatFileSize,
+  type MediaRecord,
+  type OcrResultRecord,
+  type TranscriptionRecord,
+  type ImageAnalysisRecord,
+  type ImageTagRecord,
+} from "@/services/forensics-api";
 
 const title = "Media Evidence — Evidence Examiner Desk";
 const description =
@@ -24,31 +38,139 @@ export const Route = createFileRoute("/_shell/media")({
   component: MediaPage,
 });
 
-type Tab = "image" | "audio";
+type Tab = "image" | "audio" | "all";
 
 function MediaPage() {
+  const { activeCaseId } = useInvestigation();
   const report = useReport();
   const [tab, setTab] = useState<Tab>("image");
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const items = useMemo(
-    () => report.timeline.filter((r) => text(r.kind).toLowerCase() === tab),
-    [report.timeline, tab],
-  );
+  const [mediaList, setMediaList] = useState<MediaRecord[]>([]);
+  const [ocrList, setOcrList] = useState<OcrResultRecord[]>([]);
+  const [transcriptionList, setTranscriptionList] = useState<TranscriptionRecord[]>([]);
+  const [analysisList, setAnalysisList] = useState<ImageAnalysisRecord[]>([]);
+  const [tagList, setTagList] = useState<ImageTagRecord[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (activeCaseId === null) return;
+    let mounted = true;
+    setLoading(true);
+    setError(null);
+
+    Promise.all([
+      getMedia(activeCaseId),
+      getOcrResults(activeCaseId),
+      getTranscriptions(activeCaseId),
+      getImageAnalysis(activeCaseId),
+      getImageTags(activeCaseId),
+    ])
+      .then(([mRes, ocrRes, tRes, iaRes, tagRes]) => {
+        if (mounted) {
+          setMediaList(mRes);
+          setOcrList(ocrRes);
+          setTranscriptionList(tRes);
+          setAnalysisList(iaRes);
+          setTagList(tagRes);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        if (mounted) {
+          setError(err instanceof Error ? err.message : "Failed to load media evidence.");
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [activeCaseId]);
+
+  const realMediaRecords: TimelineRecord[] = useMemo(() => {
+    return mediaList.map((m) => {
+      const ocr = ocrList.find((o) => o.media_id === m.id);
+      const tr = transcriptionList.find((t) => t.media_id === m.id);
+      const ia = analysisList.find((a) => a.media_id === m.id);
+      const tags = tagList.filter((t) => t.media_id === m.id);
+
+      let kind = m.type ? m.type.toLowerCase() : "image";
+      if (kind === "document") kind = "image"; // documents render image/OCR metadata
+
+      const headline = m.filename;
+      const detail = `${formatFileSize(m.file_size_bytes || 0)} · Status: ${m.status || "PARSED"}${
+        m.sha256 ? ` · SHA256: ${m.sha256.slice(0, 16)}...` : ""
+      }${m.associated_message_id ? ` · Message: ${m.associated_message_id}` : ""}${
+        m.associated_call_id ? ` · Call: ${m.associated_call_id}` : ""
+      }`;
+
+      return {
+        id: m.media_id || `MED-${m.id}`,
+        kind: kind,
+        timestamp: m.timestamp,
+        headline: headline,
+        detail: detail,
+        media_uri: null, // safe placeholder until media serving API is built
+        ocr_text: ocr ? ocr.text : null,
+        transcript: tr ? tr.text : null,
+        caption: ia ? (ia.context || (ia.width && ia.height ? `${ia.width}x${ia.height} ${ia.format || ""}` : null)) : null,
+        caption_status: ia ? "verified" : null,
+        detected_objects: tags.map((t) => ({ label: t.tag, confidence: t.confidence })),
+      };
+    });
+  }, [mediaList, ocrList, transcriptionList, analysisList, tagList]);
+
+  const items = useMemo(() => {
+    if (tab === "all") return realMediaRecords;
+    return realMediaRecords.filter((r) => text(r.kind).toLowerCase() === tab);
+  }, [realMediaRecords, tab]);
 
   const selected = items.find((r) => r.id === selectedId) ?? items[0];
 
   const tabs: { value: Tab; label: string; icon: typeof ImageIcon }[] = [
-    { value: "image", label: "Images", icon: ImageIcon },
+    { value: "image", label: "Images & Documents", icon: ImageIcon },
     { value: "audio", label: "Audio", icon: AudioLines },
+    { value: "all", label: "All Media", icon: Layers },
   ];
 
   return (
     <>
       <PageHeader
         title="Media Evidence"
-        description="Recovered images and audio recordings with their extracted analysis artefacts."
+        description="Recovered images, audio recordings, OCR, and AI image analysis from PostgreSQL."
       />
+
+      {/* Active Case Notification */}
+      <div className="mb-4">
+        <Panel>
+          <SectionLabel
+            icon={<FolderGit2 className="h-4 w-4 text-brand-deep" aria-hidden />}
+            right={
+              <span className="text-xs font-medium text-muted-foreground">
+                Case #{activeCaseId ?? "-"} Active
+              </span>
+            }
+          >
+            Active Case #{activeCaseId ?? "-"} Media ({mediaList.length} Items, {ocrList.length} OCR, {transcriptionList.length} Transcripts, {analysisList.length} Image Analyses, {tagList.length} Tags)
+          </SectionLabel>
+
+          {loading && (
+            <div className="flex items-center gap-2 p-4 text-sm text-muted-foreground">
+              <Loader2 className="h-4 w-4 animate-spin text-brand-deep" />
+              Loading real media and analysis data from PostgreSQL...
+            </div>
+          )}
+
+          {error && (
+            <div className="flex items-center gap-2 border-l-4 border-destructive bg-destructive/10 p-4 text-sm text-destructive">
+              <AlertTriangle className="h-4 w-4 shrink-0" />
+              <span>{error}</span>
+            </div>
+          )}
+        </Panel>
+      </div>
 
       <div className="mb-4 inline-flex rounded-lg border border-border bg-card p-1 shadow-card">
         {tabs.map((t) => (
@@ -73,10 +195,10 @@ function MediaPage() {
         ))}
       </div>
 
-      {items.length === 0 ? (
+      {!loading && !error && items.length === 0 ? (
         <Panel>
           <p className="px-4 py-12 text-center text-sm text-muted-foreground">
-            No {tab} evidence was recovered from this device.
+            No {tab} evidence was recovered for Case #{activeCaseId}.
           </p>
         </Panel>
       ) : (
@@ -109,7 +231,7 @@ function MediaPage() {
                       ) : tab === "audio" ? (
                         <AudioLines className="h-5 w-5" aria-hidden />
                       ) : (
-                        <ImageOff className="h-5 w-5" aria-hidden />
+                        <ImageIcon className="h-5 w-5 text-brand-deep" aria-hidden />
                       )}
                     </span>
                     <span className="min-w-0 flex-1">
@@ -155,3 +277,4 @@ function MediaPage() {
     </>
   );
 }
+
