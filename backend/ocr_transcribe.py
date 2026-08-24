@@ -77,9 +77,13 @@ def ocr_pdf_file(path):
 
 
 def ocr_document(path):
-    if path.lower().endswith(".pdf"):
-        return ocr_pdf_file(path)
-    return ocr_image_file(path)
+    try:
+        if path.lower().endswith(".pdf"):
+            return ocr_pdf_file(path)
+        return ocr_image_file(path)
+    except pytesseract.TesseractNotFoundError:
+        print(f"  -> WARNING: Tesseract executable not found. Skipping OCR for {path}.")
+        return "[OCR Skipped: Tesseract OCR not installed on host system]"
 
 
 def compute_folder_metadata(folder_path):

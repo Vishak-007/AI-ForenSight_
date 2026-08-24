@@ -9,16 +9,7 @@
       },
       "context": "landscape image, 320x240, dark, predominantly neutral/grayscale tones, no faces detected.",
       "face_count": 0,
-      "tags": {
-        "pills": 0.5812,
-        "drug_paraphernalia": 0.4091,
-        "firearm": 0.7397,
-        "knife_or_blade": 0.7449,
-        "cash": 0.0843,
-        "financial_document": 0.933,
-        "id_document": 0.6804,
-        "screenshot": 0.0783
-      },
+      "tags": {},
       "faces": []
     },
     {
@@ -30,16 +21,7 @@
       },
       "context": "landscape image, 960x640, bright, predominantly red tones, no faces detected.",
       "face_count": 0,
-      "tags": {
-        "pills": 1.0,
-        "drug_paraphernalia": 0.9084,
-        "firearm": 0.3105,
-        "knife_or_blade": 0.0587,
-        "cash": 0.6663,
-        "financial_document": 0.3105,
-        "id_document": 0.0223,
-        "screenshot": 0.3135
-      },
+      "tags": {},
       "faces": []
     }
   ],
