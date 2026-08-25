@@ -64,6 +64,8 @@ def run_pipeline_background(job_id: str, case_name: str, report_xml_path: Path):
         )
 
         if result.returncode == 0:
+            case_id_match = re.search(r"^CASE_ID=(\d+)$", result.stdout or "", re.MULTILINE)
+            JOBS[job_id]["case_id"] = int(case_id_match.group(1)) if case_id_match else None
             JOBS[job_id]["status"] = "completed"
             JOBS[job_id]["completed_at"] = datetime.now(timezone.utc).isoformat()
         else:
@@ -191,6 +193,8 @@ def get_upload_status(job_id: str):
         "case_name": job["case_name"],
         "status": job["status"],
     }
+    if job.get("case_id") is not None:
+        response["case_id"] = job["case_id"]
     if job.get("error_message"):
         response["error_message"] = job["error_message"]
     return response

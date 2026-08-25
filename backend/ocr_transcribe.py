@@ -12,6 +12,7 @@ Run from inside the project folder:
     python ocr_transcribe.py
 """
 
+import argparse
 import json
 import os
 import sys
@@ -27,6 +28,13 @@ PARSED_INPUT_PATH = "parsed_output.json"
 OUTPUT_PATH = "ocr_output.json"
 MEDIA_DIR = "sample_ufdr"          # document files live under here, per parser.py
 TESSERACT_CMD = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+
+
+def parse_args():
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument("--input-dir", default=MEDIA_DIR,
+                    help=f"folder containing the media/ referenced by parsed_output.json (default: {MEDIA_DIR!r})")
+    return p.parse_args()
 
 if os.path.exists(TESSERACT_CMD):
     pytesseract.pytesseract.tesseract_cmd = TESSERACT_CMD
@@ -140,6 +148,10 @@ def transcribe_all(document_records):
 
 
 def main():
+    global MEDIA_DIR
+    args = parse_args()
+    MEDIA_DIR = args.input_dir
+
     print("Loading parsed data...")
     parsed_data = load_parsed_data(PARSED_INPUT_PATH)
 

@@ -123,7 +123,7 @@ def import_data(
     ocr_path: str | None = None,
     transcripts_path: str | None = None,
     image_analysis_path: str | None = None,
-) -> tuple[dict[str, int], list[str]]:
+) -> tuple[int, dict[str, int], list[str]]:
     parsed = load_json(parsed_path)
     ocr = load_json(ocr_path) if ocr_path else {}
     transcripts = load_json(transcripts_path) if transcripts_path else {}
@@ -335,7 +335,7 @@ def import_data(
                         ON CONFLICT (media_id, tag) DO UPDATE SET confidence = EXCLUDED.confidence
                         """, (media_pk, tag.strip(), confidence_value))
                     counts["Image tags"] += 1
-    return counts, skipped
+    return case_id, counts, skipped
 
 
 def main() -> None:
@@ -348,13 +348,14 @@ def main() -> None:
     parser.add_argument("--image-analysis")
     args = parser.parse_args()
     try:
-        counts, skipped = import_data(args.case_name, args.source_file, args.parsed,
-                                       args.ocr, args.transcripts, args.image_analysis)
+        case_id, counts, skipped = import_data(args.case_name, args.source_file, args.parsed,
+                                                args.ocr, args.transcripts, args.image_analysis)
     except (OSError, ValueError, json.JSONDecodeError, RuntimeError) as error:
         print(f"Import failed and was rolled back: {error}")
         raise SystemExit(1) from error
     print("Import successful.\n")
     print(f"Case: {args.case_name}\n")
+    print(f"CASE_ID={case_id}")
     print("Inserted/updated:")
     for label, count in counts.items():
         print(f"{label}: {count}")
