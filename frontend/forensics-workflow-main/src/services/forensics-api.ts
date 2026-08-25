@@ -559,12 +559,50 @@ export async function getReportData(caseId: string | number): Promise<ReportData
 
     const summary = `Digital Forensics Report for ${caseName} (Case #${targetId}). System processed ${devices.length} device(s), ${contacts.length} contact(s), ${messages.length} message(s), ${calls.length} call(s), ${media.length} media item(s), ${ocrResults.length} OCR result(s), ${transcriptions.length} transcript(s), ${imageAnalysis.length} image analysis record(s), and ${imageTags.length} object tag(s).`;
 
-    const entities: Entity[] = contacts.map((c) => ({
-      name: c.name || c.contact_id,
-      type: "Contact Record",
-      known_contact: c.phone || "No phone listed",
-      record_ids: [c.contact_id],
-    }));
+    const entities: Entity[] = contacts.map((c) => {
+      // Collect all identifiers for this contact to match against evidence fields
+      const identifiers = [c.contact_id, c.name, c.phone]
+        .filter((v): v is string => typeof v === "string" && v.trim().length > 0)
+        .map((v) => v.toLowerCase());
+
+      const linkedIds: string[] = [];
+
+      // Messages where this contact is sender or receiver
+      for (const m of messages) {
+        const sender = (m.sender || "").toLowerCase();
+        const receiver = (m.receiver || "").toLowerCase();
+        if (identifiers.some((id) => sender.includes(id) || receiver.includes(id))) {
+          linkedIds.push(m.message_id || `MSG-${m.id}`);
+        }
+      }
+
+      // Calls where this contact is caller or callee
+      for (const call of calls) {
+        const caller = (call.caller || "").toLowerCase();
+        const callee = (call.callee || "").toLowerCase();
+        if (identifiers.some((id) => caller.includes(id) || callee.includes(id))) {
+          linkedIds.push(call.call_id || `CALL-${call.id}`);
+        }
+      }
+
+      // Media associated with messages linked to this contact
+      for (const m of media) {
+        if (m.associated_message_id) {
+          const msgId = m.message_id || `MED-${m.id}`;
+          // Check if this media's associated message is already linked
+          if (linkedIds.includes(m.associated_message_id)) {
+            linkedIds.push(msgId);
+          }
+        }
+      }
+
+      return {
+        name: c.name || c.contact_id,
+        type: "Contact",
+        known_contact: c.phone || "No phone listed",
+        record_ids: linkedIds.length > 0 ? linkedIds : [c.contact_id],
+      };
+    });
 
     const flags: Flag[] = [];
     if (ocrResults.length > 0) {

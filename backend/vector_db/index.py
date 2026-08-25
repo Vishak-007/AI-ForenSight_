@@ -1,24 +1,3 @@
-"""Build/refresh the Qdrant semantic-search index from the pipeline's JSON outputs.
-
-Usage (from the project root):
-    python -m backend.vector_db.index
-    python -m backend.vector_db.index --case-id DEV001
-
-Reads parsed_output.json / ocr_output.json / transcripts_output.json /
-image_analysis_output.json from backend/, embeds the searchable text fields
-locally, and upserts them into Qdrant. Safe to re-run: point IDs are
-deterministic (case_ref + source_type + business_id), so re-indexing the same
-data overwrites the same points instead of duplicating them.
-
-Does NOT require PostgreSQL. The payload carries the UFDR business IDs
-(case_ref / media_id / business_id) needed to trace a result back to its
-source record. The internal PostgreSQL row ids (cases.id, media.id,
-messages.id, ...) only exist once this data has been imported into
-PostgreSQL, so postgres_case_id / postgres_media_id / postgres_row_id are
-left null here for a later enrichment step to fill in once the shared DB is
-reachable.
-"""
-
 import argparse
 import json
 from typing import Optional

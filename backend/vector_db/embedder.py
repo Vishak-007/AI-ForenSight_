@@ -1,12 +1,3 @@
-"""Local sentence-transformer embedding wrapper.
-
-Model: sentence-transformers/all-MiniLM-L6-v2 -- 384-dim, ~80MB, CPU-friendly,
-and built on the same torch/transformers stack image_extractor.py already
-pulls in for CLIP. Good semantic quality for short forensic text (messages,
-OCR lines, captions) without the memory/latency cost of a larger model.
-Swap EMBEDDING_MODEL_NAME (in .env) if a bigger model is ever justified.
-"""
-
 from typing import Optional
 
 from sentence_transformers import SentenceTransformer

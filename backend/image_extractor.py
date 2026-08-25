@@ -32,7 +32,6 @@ BRIGHT_BRIGHTNESS_MIN = 180
 
 # Faces closer than this cosine distance are treated as the same person.
 # SFace's own docs suggest ~0.363 cosine distance as the same-person
-# threshold at a low false-accept rate; we use the same value.
 FACE_MATCH_DISTANCE_THRESHOLD = 0.363
 CLIP_MODEL_NAME = "openai/clip-vit-base-patch32"
 CLIP_CACHE_DIR = os.path.join(MODELS_DIR, "clip_cache")  # keep under ./models like YuNet/SFace
@@ -48,11 +47,6 @@ EVIDENCE_LABELS = {
     "screenshot":         "a screenshot of a phone or computer screen",
 }
 EVIDENCE_BASELINE_PROMPT = "a photo"
-
-# Recall-biased on purpose: a false positive costs a few seconds of analyst
-# review; a false negative silently hides evidence. Not yet calibrated
-# against real evidentiary photos -- the only sample image in this
-# prototype is a placeholder graphic. Revisit before trusting this value.
 TAG_CONFIDENCE_THRESHOLD = 0.25
 
 
@@ -189,8 +183,6 @@ def cluster_faces(all_faces):
         )
         labels = clustering.fit_predict(embeddings)
 
-    # Relabel clusters in order of first appearance so person_1 is always
-    # whichever distinct face showed up first in the media list.
     first_seen_order = []
     for label in labels:
         if label not in first_seen_order:

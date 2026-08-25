@@ -1,14 +1,3 @@
-"""Reads the pipeline's JSON outputs and yields the searchable text records
-that get embedded into Qdrant.
-
-Field selection: messages.text, OCR transcript_text (translated to English
-via translate.py's output when available), audio transcript text, image
-heuristic context, and above-threshold CLIP evidence tags -- these are the
-only free-text fields the pipeline produces; everything else (dimensions,
-hashes, timestamps) is structured metadata, not something worth a semantic
-embedding.
-"""
-
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -18,9 +7,6 @@ BACKEND_DIR = Path(__file__).resolve().parents[1]
 
 OCR_SKIP_MARKER = "[OCR Skipped"
 
-# Mirrors image_extractor.py's TAG_CONFIDENCE_THRESHOLD (defined there but not
-# currently applied in that file) -- duplicated here rather than imported so
-# this module has no coupling to the extraction pipeline's internals.
 TAG_CONFIDENCE_THRESHOLD = 0.25
 
 
@@ -88,10 +74,6 @@ def extract_records(backend_dir: Path = BACKEND_DIR) -> list[SearchableRecord]:
         raw_text = (doc.get("transcript_text") or "").strip()
         if not raw_text or raw_text.startswith(OCR_SKIP_MARKER):
             continue
-        # Embed the English translation when one exists -- the embedding
-        # model was trained on English text, so semantic search over
-        # Tanglish/code-mixed source text is far weaker than over its
-        # translated form. Falls back to the raw OCR text untranslated.
         translated_text = translated_by_media.get(doc["media_id"])
         text = translated_text or raw_text
         records.append(SearchableRecord(
