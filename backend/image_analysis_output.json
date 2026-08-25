@@ -3,45 +3,443 @@
     {
       "media_id": "MED001",
       "metadata": {
-        "width": 320,
-        "height": 240,
+        "width": 1024,
+        "height": 568,
         "format": "JPEG"
       },
-      "context": "landscape image, 320x240, dark, predominantly neutral/grayscale tones, no faces detected.",
+      "context": "landscape image, 1024x568, bright, predominantly neutral/grayscale tones, no faces detected.",
       "face_count": 0,
       "tags": {
-        "pills": 0.5812,
-        "drug_paraphernalia": 0.4091,
-        "firearm": 0.7397,
-        "knife_or_blade": 0.7449,
-        "cash": 0.0843,
-        "financial_document": 0.933,
-        "id_document": 0.6804,
-        "screenshot": 0.0783
+        "pills": 0.0111,
+        "drug_paraphernalia": 0.0036,
+        "firearm": 0.0565,
+        "knife_or_blade": 0.3376,
+        "cash": 0.9614,
+        "financial_document": 0.9676,
+        "id_document": 0.0238,
+        "screenshot": 0.8732
       },
       "faces": []
     },
     {
-      "media_id": "MED003",
+      "media_id": "MED010",
       "metadata": {
-        "width": 960,
-        "height": 640,
+        "width": 1080,
+        "height": 675,
         "format": "JPEG"
       },
-      "context": "landscape image, 960x640, bright, predominantly red tones, no faces detected.",
+      "context": "landscape image, 1080x675, moderately lit, predominantly red tones, no faces detected.",
       "face_count": 0,
       "tags": {
-        "pills": 1.0,
-        "drug_paraphernalia": 0.9084,
-        "firearm": 0.3105,
-        "knife_or_blade": 0.0587,
-        "cash": 0.6663,
-        "financial_document": 0.3105,
-        "id_document": 0.0223,
-        "screenshot": 0.3135
+        "pills": 0.0327,
+        "drug_paraphernalia": 0.0256,
+        "firearm": 0.5126,
+        "knife_or_blade": 0.0681,
+        "cash": 0.0443,
+        "financial_document": 0.3015,
+        "id_document": 0.0496,
+        "screenshot": 0.2077
+      },
+      "faces": []
+    },
+    {
+      "media_id": "MED011",
+      "metadata": {
+        "width": 1080,
+        "height": 1440,
+        "format": "JPEG"
+      },
+      "context": "portrait image, 1080x1440, moderately lit, predominantly neutral/grayscale tones, no faces detected.",
+      "face_count": 0,
+      "tags": {
+        "pills": 0.2257,
+        "drug_paraphernalia": 0.0115,
+        "firearm": 0.1325,
+        "knife_or_blade": 0.035,
+        "cash": 0.7841,
+        "financial_document": 0.0997,
+        "id_document": 0.0653,
+        "screenshot": 0.994
+      },
+      "faces": []
+    },
+    {
+      "media_id": "MED012",
+      "metadata": {
+        "width": 399,
+        "height": 769,
+        "format": "JPEG"
+      },
+      "context": "portrait image, 399x769, bright, predominantly blue tones, no faces detected.",
+      "face_count": 0,
+      "tags": {
+        "pills": 0.0035,
+        "drug_paraphernalia": 0.0001,
+        "firearm": 0.0095,
+        "knife_or_blade": 0.0486,
+        "cash": 0.1969,
+        "financial_document": 0.0035,
+        "id_document": 0.0003,
+        "screenshot": 0.4229
+      },
+      "faces": []
+    },
+    {
+      "media_id": "MED013",
+      "metadata": {
+        "width": 376,
+        "height": 749,
+        "format": "JPEG"
+      },
+      "context": "portrait image, 376x749, bright, predominantly blue tones, no faces detected.",
+      "face_count": 0,
+      "tags": {
+        "pills": 0.0362,
+        "drug_paraphernalia": 0.001,
+        "firearm": 0.0916,
+        "knife_or_blade": 0.1322,
+        "cash": 0.9568,
+        "financial_document": 0.9784,
+        "id_document": 0.0045,
+        "screenshot": 0.9308
+      },
+      "faces": []
+    },
+    {
+      "media_id": "MED014",
+      "metadata": {
+        "width": 1080,
+        "height": 633,
+        "format": "JPEG"
+      },
+      "context": "landscape image, 1080x633, bright, predominantly neutral/grayscale tones, no faces detected.",
+      "face_count": 0,
+      "tags": {
+        "pills": 0.0645,
+        "drug_paraphernalia": 0.005,
+        "firearm": 0.0493,
+        "knife_or_blade": 0.056,
+        "cash": 0.8894,
+        "financial_document": 0.0851,
+        "id_document": 0.0005,
+        "screenshot": 0.3009
+      },
+      "faces": []
+    },
+    {
+      "media_id": "MED015",
+      "metadata": {
+        "width": 1080,
+        "height": 564,
+        "format": "JPEG"
+      },
+      "context": "landscape image, 1080x564, dark, predominantly neutral/grayscale tones, no faces detected.",
+      "face_count": 0,
+      "tags": {
+        "pills": 0.0065,
+        "drug_paraphernalia": 0.0025,
+        "firearm": 0.0415,
+        "knife_or_blade": 0.0445,
+        "cash": 0.8463,
+        "financial_document": 0.1276,
+        "id_document": 0.0002,
+        "screenshot": 0.0877
+      },
+      "faces": []
+    },
+    {
+      "media_id": "MED021",
+      "metadata": {
+        "width": 602,
+        "height": 334,
+        "format": "PNG"
+      },
+      "context": "landscape image, 602x334, dark, predominantly neutral/grayscale tones, no faces detected.",
+      "face_count": 0,
+      "tags": {
+        "pills": 0.0522,
+        "drug_paraphernalia": 0.0027,
+        "firearm": 0.0942,
+        "knife_or_blade": 0.2739,
+        "cash": 0.0955,
+        "financial_document": 0.5114,
+        "id_document": 0.2215,
+        "screenshot": 0.9684
+      },
+      "faces": []
+    },
+    {
+      "media_id": "MED022",
+      "metadata": {
+        "width": 421,
+        "height": 800,
+        "format": "PNG"
+      },
+      "context": "portrait image, 421x800, dark, predominantly neutral/grayscale tones, no faces detected.",
+      "face_count": 0,
+      "tags": {
+        "pills": 0.0011,
+        "drug_paraphernalia": 0.0002,
+        "firearm": 0.0417,
+        "knife_or_blade": 0.3069,
+        "cash": 0.0459,
+        "financial_document": 0.0753,
+        "id_document": 0.0456,
+        "screenshot": 0.927
+      },
+      "faces": []
+    },
+    {
+      "media_id": "MED023",
+      "metadata": {
+        "width": 332,
+        "height": 613,
+        "format": "PNG"
+      },
+      "context": "portrait image, 332x613, moderately lit, predominantly neutral/grayscale tones, no faces detected.",
+      "face_count": 0,
+      "tags": {
+        "pills": 0.0335,
+        "drug_paraphernalia": 0.0002,
+        "firearm": 0.1783,
+        "knife_or_blade": 0.0988,
+        "cash": 0.4365,
+        "financial_document": 0.5637,
+        "id_document": 0.0059,
+        "screenshot": 0.9554
+      },
+      "faces": []
+    },
+    {
+      "media_id": "MED024",
+      "metadata": {
+        "width": 1018,
+        "height": 829,
+        "format": "PNG"
+      },
+      "context": "landscape image, 1018x829, dark, predominantly neutral/grayscale tones, no faces detected.",
+      "face_count": 0,
+      "tags": {
+        "pills": 0.0023,
+        "drug_paraphernalia": 0.0004,
+        "firearm": 0.1378,
+        "knife_or_blade": 0.0447,
+        "cash": 0.0041,
+        "financial_document": 0.0697,
+        "id_document": 0.0316,
+        "screenshot": 0.961
+      },
+      "faces": []
+    },
+    {
+      "media_id": "MED025",
+      "metadata": {
+        "width": 720,
+        "height": 447,
+        "format": "PNG"
+      },
+      "context": "landscape image, 720x447, dark, predominantly neutral/grayscale tones, no faces detected.",
+      "face_count": 0,
+      "tags": {
+        "pills": 0.0149,
+        "drug_paraphernalia": 0.0009,
+        "firearm": 0.0902,
+        "knife_or_blade": 0.0675,
+        "cash": 0.1601,
+        "financial_document": 0.984,
+        "id_document": 0.4841,
+        "screenshot": 0.9975
+      },
+      "faces": []
+    },
+    {
+      "media_id": "MED026",
+      "metadata": {
+        "width": 560,
+        "height": 259,
+        "format": "PNG"
+      },
+      "context": "landscape image, 560x259, dark, predominantly neutral/grayscale tones, no faces detected.",
+      "face_count": 0,
+      "tags": {
+        "pills": 0.0065,
+        "drug_paraphernalia": 0.0002,
+        "firearm": 0.2437,
+        "knife_or_blade": 0.0419,
+        "cash": 0.06,
+        "financial_document": 0.2586,
+        "id_document": 0.2431,
+        "screenshot": 0.9949
+      },
+      "faces": []
+    },
+    {
+      "media_id": "MED027",
+      "metadata": {
+        "width": 870,
+        "height": 752,
+        "format": "PNG"
+      },
+      "context": "landscape image, 870x752, moderately lit, predominantly red tones, no faces detected.",
+      "face_count": 0,
+      "tags": {
+        "pills": 0.0803,
+        "drug_paraphernalia": 0.0002,
+        "firearm": 0.1612,
+        "knife_or_blade": 0.0222,
+        "cash": 0.9244,
+        "financial_document": 0.0848,
+        "id_document": 0.0012,
+        "screenshot": 0.0123
+      },
+      "faces": []
+    },
+    {
+      "media_id": "MED028",
+      "metadata": {
+        "width": 741,
+        "height": 738,
+        "format": "PNG"
+      },
+      "context": "landscape image, 741x738, moderately lit, predominantly neutral/grayscale tones, no faces detected.",
+      "face_count": 0,
+      "tags": {
+        "pills": 0.0251,
+        "drug_paraphernalia": 0.0008,
+        "firearm": 0.0947,
+        "knife_or_blade": 0.0387,
+        "cash": 0.0091,
+        "financial_document": 0.0127,
+        "id_document": 0.0013,
+        "screenshot": 0.0031
+      },
+      "faces": []
+    },
+    {
+      "media_id": "MED029",
+      "metadata": {
+        "width": 1920,
+        "height": 1080,
+        "format": "PNG"
+      },
+      "context": "landscape image, 1920x1080, moderately lit, predominantly neutral/grayscale tones, 2 faces detected.",
+      "face_count": 2,
+      "tags": {
+        "pills": 0.0086,
+        "drug_paraphernalia": 0.0,
+        "firearm": 0.0099,
+        "knife_or_blade": 0.0028,
+        "cash": 0.0201,
+        "financial_document": 0.0247,
+        "id_document": 0.0337,
+        "screenshot": 0.8761
+      },
+      "faces": [
+        {
+          "person_id": "person_1",
+          "bbox": [
+            838,
+            335,
+            218,
+            297
+          ],
+          "confidence": 0.9482
+        },
+        {
+          "person_id": "person_2",
+          "bbox": [
+            1241,
+            516,
+            38,
+            47
+          ],
+          "confidence": 0.9064
+        }
+      ]
+    },
+    {
+      "media_id": "MED030",
+      "metadata": {
+        "width": 1920,
+        "height": 1080,
+        "format": "PNG"
+      },
+      "context": "landscape image, 1920x1080, moderately lit, predominantly neutral/grayscale tones, 2 faces detected.",
+      "face_count": 2,
+      "tags": {
+        "pills": 0.0051,
+        "drug_paraphernalia": 0.0006,
+        "firearm": 0.0526,
+        "knife_or_blade": 0.0242,
+        "cash": 0.0136,
+        "financial_document": 0.0058,
+        "id_document": 0.0246,
+        "screenshot": 0.7783
+      },
+      "faces": [
+        {
+          "person_id": "person_3",
+          "bbox": [
+            920,
+            453,
+            230,
+            297
+          ],
+          "confidence": 0.9363
+        },
+        {
+          "person_id": "person_2",
+          "bbox": [
+            1241,
+            516,
+            38,
+            47
+          ],
+          "confidence": 0.9062
+        }
+      ]
+    },
+    {
+      "media_id": "MED031",
+      "metadata": {
+        "width": 1148,
+        "height": 632,
+        "format": "PNG"
+      },
+      "context": "landscape image, 1148x632, dark, predominantly neutral/grayscale tones, no faces detected.",
+      "face_count": 0,
+      "tags": {
+        "pills": 0.0154,
+        "drug_paraphernalia": 0.001,
+        "firearm": 0.2063,
+        "knife_or_blade": 0.1128,
+        "cash": 0.0378,
+        "financial_document": 0.3824,
+        "id_document": 0.0397,
+        "screenshot": 0.9925
       },
       "faces": []
     }
   ],
-  "persons": {}
+  "persons": {
+    "person_1": {
+      "appearances": [
+        "MED029"
+      ],
+      "face_count": 1
+    },
+    "person_2": {
+      "appearances": [
+        "MED029",
+        "MED030"
+      ],
+      "face_count": 2
+    },
+    "person_3": {
+      "appearances": [
+        "MED030"
+      ],
+      "face_count": 1
+    }
+  }
 }

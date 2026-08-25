@@ -1,12 +1,24 @@
 """
 UFDR parser prototype.
 
-Input:  a UFDR-style XML export (report.xml) + its media/ folder.
+Input:  a UFDR-style XML export (report.xml) + its media folder.
 Output: a single normalized JSON file containing every record type,
         with media records enriched by type-specific metadata and a
         SHA-256 hash (so tampering can be detected later — this is the
         "evidentiary integrity" hook, cheap to add now, expensive to
         bolt on later).
+
+Two XML schemas are recognized, both normalized down to the same output
+shape so nothing downstream needs to know which one was used:
+
+- <ufdr_report> — this project's own schema (see sample_ufdr/report.xml):
+  flat top-level <messages>, <calls>, <contacts>, <media> lists.
+- <report version="..."> — a Cellebrite-style export: <metadata> instead
+  of <device_info>, <calls> as attributes (type="Incoming"/"Outgoing" +
+  a single counterpart `number`), and messages nested per-app inside
+  <chats><chat><message sender=".."><attachment type="..">path</attachment>
+  rather than flat top-level lists. extract_report_schema() flattens the
+  chat messages and pulls their inline attachments out as media records.
 
 Supported media types right now: image, audio, document.
 Video is intentionally NOT handled yet — see the `video` branch below,
@@ -49,14 +61,23 @@ def read_image_metadata(path):
 
 
 def read_audio_metadata(path):
-    with wave.open(path, "rb") as f:
-        frames = f.getnframes()
-        rate = f.getframerate()
-        return {
-            "duration_seconds": round(frames / float(rate), 2),
-            "channels": f.getnchannels(),
-            "sample_rate": rate,
-        }
+    """Only raw WAV/RIFF is actually readable here (stdlib `wave` doesn't
+    decode compressed formats). Real-world voice notes are very often mp4/
+    m4a/aac containers (e.g. WhatsApp saves them as .mp4) -- for anything
+    wave can't open, fall back to just the extension rather than crashing
+    the whole parse over one file's sidecar metadata. transcribe.py (Whisper)
+    is what actually reads the audio content later; this is best-effort."""
+    try:
+        with wave.open(path, "rb") as f:
+            frames = f.getnframes()
+            rate = f.getframerate()
+            return {
+                "duration_seconds": round(frames / float(rate), 2),
+                "channels": f.getnchannels(),
+                "sample_rate": rate,
+            }
+    except (wave.Error, EOFError):
+        return {"ext": os.path.splitext(path)[1].lower().lstrip(".")}
 
 
 def read_document_metadata(path):
@@ -117,6 +138,80 @@ def parse_media_item(item):
     return record
 
 
+def extract_report_schema(report):
+    """Parses the Cellebrite-style <report version=".."> schema and returns
+    (device_info, messages, calls, contacts, media_raw) in the same shape
+    extract from <ufdr_report> below, so main() can treat both identically
+    from here on.
+    """
+    metadata = report.get("metadata") or {}
+    device_info = {
+        "device_id": metadata.get("case_number") or metadata.get("device_name") or "UNKNOWN_DEVICE",
+        "imei": None,
+        "extraction_date": None,
+    }
+
+    contacts = [
+        {"id": c.get("@id"), "name": c.get("name"), "phone": c.get("phone")}
+        for c in as_list((report.get("contacts") or {}).get("contact"))
+    ]
+
+    calls = []
+    for c in as_list((report.get("calls") or {}).get("call")):
+        call_type = (c.get("@type") or "").lower()
+        number = c.get("@number")
+        calls.append({
+            "id": c.get("@id"),
+            "caller": number if call_type == "incoming" else None,
+            "callee": number if call_type == "outgoing" else None,
+            "timestamp": c.get("@timestamp"),
+            "duration_seconds": c.get("@duration"),
+            "type": call_type or None,
+        })
+
+    # Messages live nested per-app inside <chats><chat><message>, with
+    # attachments inline on the message rather than a flat top-level list --
+    # flatten both out here.
+    messages = []
+    media_raw = []
+    media_counter = 0
+
+    for chat in as_list((report.get("chats") or {}).get("chat")):
+        chat_messages = as_list(chat.get("message"))
+        # The counterpart's number is never stated separately -- infer it as
+        # whichever sender in this chat isn't the device owner ("self").
+        counterpart = next(
+            (m.get("@sender") for m in chat_messages if m.get("@sender") and m.get("@sender") != "self"),
+            None,
+        )
+
+        for m in chat_messages:
+            sender = m.get("@sender")
+            message_id = m.get("@id")
+            timestamp = m.get("@timestamp")
+
+            messages.append({
+                "id": message_id,
+                "sender": sender,
+                "receiver": counterpart if sender == "self" else "self",
+                "timestamp": timestamp,
+                "text": m.get("body"),
+            })
+
+            for attachment in as_list(m.get("attachment")):
+                media_counter += 1
+                media_raw.append({
+                    "id": f"MED{media_counter:03d}",
+                    "type": attachment.get("@type"),
+                    "timestamp": timestamp,
+                    "filename": attachment.get("#text"),
+                    "associated_message_id": message_id,
+                    "associated_call_id": None,
+                })
+
+    return device_info, messages, calls, contacts, media_raw
+
+
 def main():
     global BASE_DIR, XML_PATH
     args = parse_args()
@@ -126,17 +221,28 @@ def main():
     with open(XML_PATH, "r", encoding="utf-8") as f:
         raw = xmltodict.parse(f.read())
 
-    report = raw["ufdr_report"]
+    if "ufdr_report" in raw:
+        report = raw["ufdr_report"]
+        device_info = report.get("device_info", {})
+        messages = as_list(report.get("messages", {}).get("message"))
+        calls = as_list(report.get("calls", {}).get("call"))
+        contacts = as_list(report.get("contacts", {}).get("contact"))
+        media_raw = as_list(report.get("media", {}).get("media_item"))
+    elif "report" in raw:
+        device_info, messages, calls, contacts, media_raw = extract_report_schema(raw["report"])
+    else:
+        root_key = next(iter(raw), "<empty>")
+        raise SystemExit(
+            f"ERROR: unrecognized XML root element '<{root_key}>' in {XML_PATH} -- "
+            f"expected '<ufdr_report>' or '<report>'."
+        )
 
     parsed = {
-        "device_info": report.get("device_info", {}),
-        "messages": as_list(report.get("messages", {}).get("message")),
-        "calls": as_list(report.get("calls", {}).get("call")),
-        "contacts": as_list(report.get("contacts", {}).get("contact")),
-        "media": [
-            parse_media_item(item)
-            for item in as_list(report.get("media", {}).get("media_item"))
-        ],
+        "device_info": device_info,
+        "messages": messages,
+        "calls": calls,
+        "contacts": contacts,
+        "media": [parse_media_item(item) for item in media_raw],
     }
 
     with open(OUTPUT_PATH, "w", encoding="utf-8") as f:

@@ -1,11 +1,54 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Fingerprint, HardDrive, LogOut, Menu, X, UserRound } from "lucide-react";
 import { NAV_ITEMS } from "./nav-items";
 import { useAuth } from "@/lib/auth";
 import { useReport } from "@/lib/use-report";
+import { useInvestigationOptional } from "@/lib/investigation";
+import { getCases } from "@/services/forensics-api";
+import type { CaseRecord } from "@/services/forensics-api";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+
+function CaseSwitcher() {
+  const investigation = useInvestigationOptional();
+  const [cases, setCases] = useState<CaseRecord[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    getCases()
+      .then((data) => {
+        if (!cancelled) setCases(data);
+      })
+      .catch(() => {
+        /* leave the list empty -- the app still works against activeCaseId directly */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (!investigation || cases.length === 0) return null;
+
+  return (
+    <Select
+      {...(investigation.activeCaseId != null ? { value: String(investigation.activeCaseId) } : {})}
+      onValueChange={(value) => investigation.selectCase(Number(value))}
+    >
+      <SelectTrigger className="h-8 w-auto min-w-[10rem] shrink-0 gap-2 border-ai-border bg-ai text-xs font-semibold text-brand-dark">
+        <SelectValue placeholder="Select case" />
+      </SelectTrigger>
+      <SelectContent>
+        {cases.map((c) => (
+          <SelectItem key={c.id} value={String(c.id)}>
+            Case #{c.id} · {c.case_name}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}
 
 function NavList({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -135,10 +178,13 @@ export function AppLayout({ children }: { children: ReactNode }) {
             <span className="min-w-0 truncate text-sm font-bold tracking-tight text-foreground lg:text-base">
               Evidence Examiner Desk
             </span>
-            <span className="flex shrink-0 items-center gap-2 rounded-full border border-ai-border bg-ai px-3 py-1.5">
-              <HardDrive className="h-4 w-4 text-brand-deep" aria-hidden />
-              <span className="label-caps text-brand-dark">Device {report.device_id}</span>
-            </span>
+            <div className="flex shrink-0 items-center gap-2">
+              <CaseSwitcher />
+              <span className="flex shrink-0 items-center gap-2 rounded-full border border-ai-border bg-ai px-3 py-1.5">
+                <HardDrive className="h-4 w-4 text-brand-deep" aria-hidden />
+                <span className="label-caps text-brand-dark">Device {report.device_id}</span>
+              </span>
+            </div>
           </div>
           <div className="h-0.5 w-full bg-brand-deep" />
         </header>

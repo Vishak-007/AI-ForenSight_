@@ -199,9 +199,16 @@ def main():
     # 7. Qdrant semantic-search indexing -- best-effort: the case data is
     # already safely committed to Postgres by this point, so a failure here
     # (e.g. Qdrant not running) shouldn't be treated as a pipeline failure.
+    # Tagged with the Postgres case_id (not the UFDR's own device_id) so two
+    # different uploads that happen to share a device_id -- e.g. re-running
+    # the same sample file -- get separate search indexes instead of one
+    # silently overwriting the other's points.
+    vector_cmd = [py_exe, "-m", "backend.vector_db.index"]
+    if case_id:
+        vector_cmd += ["--case-id", f"case-{case_id}"]
     run_stage(
         stage_name="7/7 Semantic Search Indexing (vector_db.index)",
-        cmd=[py_exe, "-m", "backend.vector_db.index"],
+        cmd=vector_cmd,
         expected_output=None,
         cwd=PROJECT_ROOT,
         fatal=False,

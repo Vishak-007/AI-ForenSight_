@@ -1,45 +1,59 @@
 {
   "folder_metadata": {
-    "folder_path": "C:\\Users\\Admin\\OneDrive\\Desktop\\AIForensight\\backend\\sample_ufdr",
-    "file_count": 7,
-    "total_size_bytes": 234883,
-    "last_modified": "2026-08-24T05:55:54.843860"
+    "folder_path": "C:\\Users\\Admin\\OneDrive\\Desktop\\AIForensight\\backend\\uploads\\74334122_Step_5C_Test_Case\\extracted",
+    "file_count": 32,
+    "total_size_bytes": 14898509,
+    "last_modified": "2026-08-25T12:23:50.628058"
   },
   "documents": [
     {
-      "media_id": "MED006",
-      "filename": "media/doc_001.png",
-      "transcript_text": "CASE NOTE - INTERNAL\nDate: 2025-03-02\n\nSubject was seen meeting an\nunknown contact near the\nwarehouse at 21:00 hrs.\nFollow up required.",
+      "media_id": "MED002",
+      "filename": "media/doc_001.pdf",
+      "transcript_text": "CRYPTOCURRENCY TRANSACTION RECEIPT\n\nCONFIDENTIAL FORENSIC EVIDENCE ARTIFACT #EVI-88402\n\nEVIDENCE LOGGED - CASE #CASE-2026-DRUG-CRYPTO\n\nTransaction Summary\n\nTRANSACTION ID 4a5e1e4baab89f3a21c90d81f5c6b7321e4a1a2b3c4d5e6f7a8b9co\n(TXID) die2f3a4b\n\nASSET TYPE Bitcoin (BTC)\n\na AN@EERRED 0.45000000 BIC\n\nNETWORK FEE 0.00015000 BTC\n\nTIMESTAMP 2026-08-21 09:14:22 UTC\n\nSTATUS CONFIRMED (6+ Confirmations)\n\n| Addresses Involved\n\nSENDER (ORIGIN WALLET) 3J98t1IWpEZ73CNmQviecrnyiWrnqRhWNLy\n\nRECIPIENT (DESTINATION WALLET) 1A1zP1eP5QGefi2DMPTfFTL5SLmv7DivfNa\n\nAssociated Notes & Intercepts\n\n\"Transfer of 0.45 BTC initiated via P2P mixer. Destination wallet tied to Alex (Crypto Broker).\"\n\nGenerated for Mobile Forensic Extraction & UFDR Testing Pipeline | Confidential",
       "file_metadata": {
-        "sha256": "f9e3cb12aef9772c20864379447fa040aec22f59930821e05833141b939264aa",
-        "file_size_bytes": 17671,
-        "width": 500,
-        "height": 260,
-        "format": "PNG",
-        "ext": "png"
+        "sha256": "a8756f06c796675b7fb055feeacce6c9bbb1ab5f0d1cdf12cc58688c2f68a770",
+        "file_size_bytes": 22683,
+        "ext": "pdf"
       }
     },
     {
       "media_id": "MED004",
-      "filename": "media/doc_002.pdf",
-      "transcript_text": "CASE NOTE - INTERNAL\nDate: 2025-03-02\n\nSubject was seen meeting an\nunknown contact near the\nwarehouse at 21:00 hrs.\nFollow up required.",
+      "filename": "media/doc_003.pdf",
+      "transcript_text": "GOVERNMENT OF INDIA\n\nUNIQUE IDENTIFICATION AUTHORITY OF INDIA\n\nEVIDENCE ARTIFACT #GEN-77109 \u2014 PERSONAL IDENTIFICATION RECORD\n\nFull Name: Ramesh Kumar\nDate of Birth: 14/08/1988\n\nGender: Male\n\nAddress: 124 Green Park Avenue, Sector 4, New Delhi -\n110016\n\n+91 98110 22334\n\nMock Identification Document created for Mobile Forensic Extraction & UFDR Testing Pipeline.",
       "file_metadata": {
-        "sha256": "641b9784405a7ec8fca2af4d27e36fc2950ac3d6f030785c9e31d7d546fc47aa",
-        "file_size_bytes": 15310,
+        "sha256": "bb2cd22fd9db6547fc3b8cba11540ff4ca174cc0de57abe2a51b5e5f125048de",
+        "file_size_bytes": 14129,
         "ext": "pdf"
       }
     },
     {
       "media_id": "MED005",
-      "filename": "media/doc_003.png",
-      "transcript_text": "Why Digital Forensics Matters Today\n\nEvery phone we carry quietly records where we go, who we talk\nto, and what we search for. When a crime is committed, this\ntrail of data often becomes the strongest evidence available.\n\nInvestigators extract this data using specialized tools that\npull messages, call logs, photos, and app data off a seized\ndevice without altering the original evidence.\n\nThe real challenge is not collecting the data but making sense\n\nof it quickly. A single extraction can contain thousands of\nmessages and files, far more than any human can review by hand\nin time.",
+      "filename": "media/doc_002.pdf",
+      "transcript_text": "VAULTX CRYPTO EXCHANGE - ACCOUNT AUDIT REPORT\n\nAccount ID: VX-994012 | Export Date: 2026-08-22\n\nAccount Holder: Alex (Crypto Broker)\n\nPrimary Wallet: 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa\n\nRecent Ledger Activity\nDate Type Asset\n2026-08-21 09:14 Deposit BTC\n2026-08-21 10:30 Swap USDT\n\n2026-08-22 08:00 Withdrawal USDT\n\nAudit Flag: High-volume P2P transfers flagged for manual compliance review.\n\nAmount\n\n+@.4500 BIC\n\n+26,500.@0 USDT\n\n-10,000.00 USDT\n\nTxHash / Address\n4a5el1e4b...a4b\nInternal Exchange Swap\n\n@x71C765...9A2C",
       "file_metadata": {
-        "sha256": "98015aecd84d45269b8c671c36c86c06308b948a5e83d9fb15c35c2012f7e90e",
-        "file_size_bytes": 40163,
-        "width": 640,
-        "height": 448,
-        "format": "PNG",
-        "ext": "png"
+        "sha256": "e66265493836f71d30eb6c5054b29d91f05c691eb120c54d626676b506e6394d",
+        "file_size_bytes": 20551,
+        "ext": "pdf"
+      }
+    },
+    {
+      "media_id": "MED008",
+      "filename": "media/doc_004.pdf",
+      "transcript_text": "DIGITAL FORENSICS\n\nINVESTIGATION REPORT\n\nEvidence Examiner Desk - Official Case Report\n\nCase ID CASE-1\n\nDevice ID DEVO01\n\nUFDR file sample_ufdr/report.xml\nFile size 1.0 MB\n\nInvestigation date 8/25/2026\n\nReport generated 8/25/2026, 8:45:50 AM\nAnalyst Tharunvta\n\nAnalysis status Complete\n\nThis document contains recovered device evidence together with clearly labelled analysis-derived and Al-generated content.\nAl-generated text and derived findings are not confirmed facts and must be verified against the source evidence.\n\n1. CASE OVERVIEW\n\nCase ID CASE-1\n\nDevice ID DEVO01\n\nEvidence records 9\n\nAnalysis completion Completed 8/25/2026\n\n2. EXECUTIVE / Al SUMMARY\n\nAI-GENERATED SUMMARY - Al-GENERATED ANALYSIS. VERIFY AGAINST SOURCE EVIDENCE.\nDigital Forensics Report for Sample UFDR Case (Case #1). System processed 1 device(s), 1 contact(s), 2\n\nmessage(s), 1 call(s), 6 media item(s), 3 OCR result(s), 1 transcript(s), 2 image analysis record(s), and 16\nobject tag(s).\n\n3. EVIDENCE STATISTICS\n\n2 1 1 )\nMESSAGES CALLS AUDIO IMAGES\n3 16 1 4\n\nOCR RESULTS DETECTED OBJECTS ENTITIES FLAGS\n\nCase CASE-1 - Digital Forensics Investigation Report Page 1\n\n4. ENTITIES\n\nRahul Sharma - Contact Record\nKnown contact: +919876543210\nRelated records: CT001\n\n5. FLAGS / ANALYSIS FINDINGS\n\nANALYSIS / DERIVED FINDING - NOT A CONFIRMED FACT\n\nOCR Text Extracted (3 items)\nSource: Tesseract OCR Engine\nRecords: MED-4, MED-5, MED-6\n\nANALYSIS / DERIVED FINDING - NOT A CONFIRMED FACT\n\nAudio Transcripts Extracted (1 file)\nSource: Whisper Audio Transcriber\nRecords: MED-2\n\nANALYSIS / DERIVED FINDING - NOT A CONFIRMED FACT\n\nAl Image Scene Classification (2 images)\nSource: OpenCV / CLIP Scene Detector\nRecords: MED-1, MED-3\n\nANALYSIS / DERIVED FINDING - NOT A CONFIRMED FACT\n\nObject Detections Tagged (16 detections)\n\nSource: YOLO Object Classifier\n\nRecords: MED-1, MED-1, MED-1, MED-1, MED-1, MED-1, MED-1, MED-1, MED-3, MED-3, MED-3,\nMED-3, MED-3, MED-3, MED-3, MED-3\n\n6. EVIDENCE TIMELINE\n\n[M001] MESSAGE - Mar 01, 2025, 08:14 PM\n+911234567890 -> +919876543210\nCall me tonight, don't message here again\n\n[M002] MESSAGE - Mar 01, 2025, 08:16 PM\n+919876543210 -> +911234567890\nOk. Sending the photo now\n\n[MED001] IMAGE - Mar 01, 2025, 08:20 PM\n\nmedia/img_001.jpg\n\n4.2 KB - Status: PARSED - SHA256: 22e7ccf27b1609d5...\nDetected objects: pills (58%), drug_paraphernalia (41%), firearm (74%), knife_or_blade (74%), cash (8%),\nfinancial_document (93%), id_document (68%), screenshot (8%)\n\nCase CASE-1 - Digital Forensics Investigation Report Page 2\n\nAl CAPTION - UNVERIFIED\n\nlandscape image, 320x240, dark, predominantly neutral/grayscale tones, no faces detected.\n\n[C001] CALL - Mar 01, 2025, 09:00 PM\nOutgoing +91 1234567890 -> +919876543210\nDuration: 184s - Type: outgoing\n\n[MED002] AUDIO - Mar 01, 2025, 10:00 PM\nmedia/aud_001.wav\n31.3 KB - Status: PARSED - SHA256: b67e9ec72821ac48...\n\n[MEDO06] IMAGE - Mar 02, 2025, 09:00 AM\nmedia/doc_001.png\n17.3 KB - Status: PARSED - SHA256: f9e3cb12aef9772c...\nOCR text: CASE NOTE - INTERNAL\nDate: 2025-03-02\n\nSubject was seen meeting an\nunknown contact near the\nwarehouse at 21:00 hrs.\nFollow up required.\n\n[MED004] IMAGE - Mar 02, 2025, 09:05 AM\nmedia/doc_002.pdf\n15.0 KB - Status: PARSED - SHA256: 641b9784405a7ec8...\nOCR text: CASE NOTE - INTERNAL\nDate: 2025-03-02\n\nSubject was seen meeting an\nunknown contact near the\nwarehouse at 21:00 hrs.\nFollow up required.\n\n[MED005] IMAGE - Mar 02, 2025, 09:10 AM\n\nmedia/doc_003.png\n\n39.2 KB - Status: PARSED - SHA256: 98015aecd84d4526...\nOCR text: Why Digital Forensics Matters Today\n\nEvery phone we carry quietly records where we go, who we talk\nto, and what we search for. When a crime is committed, this\ntrail of data often becomes the strongest evidence available.\n\nInvestigators extract this data using specialized tools that\n\npull messages, call logs, photos, and app data off a seized\ndevice without altering the original evidence.\n\nThe real challenge is not collecting the data but making sense\nof it quickly. A single extraction can contain thousands of\n\nmessages and files, far more than any human can review by hand\nin time.\n\nCase CASE-1 - Digital Forensics Investigation Report Page 3\n\n[MED003] IMAGE - Mar 02, 2025, 11:05 AM\n\nmedia/img_002.jpg\n\n120.1 KB - Status: PARSED - SHA256: 36623a5a835f82eb...\nDetected objects: pills (100%), drug_paraphernalia (91%), firearm (31%), knife_or_ blade (6%), cash (67%),\nfinancial_document (31%), id_document (2%), screenshot (31%)\n\nAl CAPTION - UNVERIFIED\n\nlandscape image, 960x640, bright, predominantly red tones, no faces detected.\n\nReport generated 8/25/2026, 8:45:50 AM by Tharunvta.\n\nCase CASE-1 - Digital Forensics Investigation Report Page 4",
+      "file_metadata": {
+        "sha256": "bdf913eb0da100e1f94af5d15bb38b358cbeddba790e1a56981d63271eef53e6",
+        "file_size_bytes": 24295,
+        "ext": "pdf"
+      }
+    },
+    {
+      "media_id": "MED009",
+      "filename": "media/doc_005.pdf",
+      "transcript_text": "DIGITAL FORENSICS\n\nINVESTIGATION REPORT\n\nEvidence Examiner Desk - Official Case Report\n\nCase ID CASE-6\n\nDevice ID DEVO01\n\nUFDR file sample_ufdr/report.xml\nFile size 1.0 MB\n\nInvestigation date 8/25/2026\n\nReport generated 8/25/2026, 1:12:56 AM\nAnalyst Tharunvta\n\nAnalysis status Complete\n\nThis document contains recovered device evidence together with clearly labelled analysis-derived and Al-generated content.\nAl-generated text and derived findings are not confirmed facts and must be verified against the source evidence.\n\n1. CASE OVERVIEW\n\nCase ID CASE-6\n\nDevice ID DEVO01\n\nEvidence records 9\n\nAnalysis completion Completed 8/25/2026\n\n2. EXECUTIVE / Al SUMMARY\n\nAI-GENERATED SUMMARY - Al-GENERATED ANALYSIS. VERIFY AGAINST SOURCE EVIDENCE.\nDigital Forensics Report for Final E2E Integration Test 1787590659 (Case #6). System processed 1\n\ndevice(s), 1 contact(s), 2 message(s), 1 call(s), 6 media item(s), 3 OCR result(s), 1 transcript(s), 2 image\nanalysis record(s), and 0 object tag(s).\n\n3. EVIDENCE STATISTICS\n\n2 1 1 9)\nMESSAGES CALLS AUDIO IMAGES\n3 0 1 3\n\nOCR RESULTS DETECTED OBJECTS ENTITIES FLAGS\n\nCase CASE-6 - Digital Forensics Investigation Report Page 1\n\n4. ENTITIES\n\nRahul Sharma - Contact Record\nKnown contact: +919876543210\nRelated records: CT001\n\n5. FLAGS / ANALYSIS FINDINGS\n\nANALYSIS / DERIVED FINDING - NOT A CONFIRMED FACT\nOCR Text Extracted (3 items)\n\nSource: Tesseract OCR Engine\n\nRecords: MED-40, MED-41, MED-42\n\nANALYSIS / DERIVED FINDING - NOT A CONFIRMED FACT\nAudio Transcripts Extracted (1 file)\n\nSource: Whisper Audio Transcriber\nRecords: MED-38\n\nANALYSIS / DERIVED FINDING - NOT A CONFIRMED FACT\nAl Image Scene Classification (2 images)\n\nSource: OpenCV / CLIP Scene Detector\n\nRecords: MED-37, MED-39\n\n6. EVIDENCE TIMELINE\n\n[M001] MESSAGE - Mar 01, 2025, 08:14 PM\n+911234567890 -> +919876543210\nCall me tonight, don't message here again\n\n[M002] MESSAGE - Mar 01, 2025, 08:16 PM\n+919876543210 -> +911234567890\nOk. Sending the photo now\n\n[MED001] IMAGE - Mar 01, 2025, 08:20 PM\nmedia/img_001.jpg\n4.2 KB - Status: PARSED - SHA256: 22e7ccf27b1609d5...\n\nAl CAPTION - UNVERIFIED\n\nlandscape image, 320x240, dark, predominantly neutral/grayscale tones, no faces detected.\n\n[C001] CALL - Mar 01, 2025, 09:00 PM\nOutgoing +911234567890 -> +919876543210\nDuration: 184s - Type: outgoing\n\nCase CASE-6 - Digital Forensics Investigation Report Page 2\n\n[MED002] AUDIO - Mar 01, 2025, 10:00 PM\nmedia/aud_001.wav\n31.3 KB - Status: PARSED - SHA256: b67e9ec72821ac48...\n\n[MEDO06] IMAGE - Mar 02, 2025, 09:00 AM\nmedia/doc_001.png\n17.3 KB - Status: PARSED - SHA256: f9e3cb12aef9772c...\n\nOCR text: [OCR Skipped: Tesseract OCR not installed on host system]\n\n[MED004] IMAGE - Mar 02, 2025, 09:05 AM\nmedia/doc_002.pdf\n15.0 KB - Status: PARSED - SHA256: 641b9784405a7ec8...\n\nOCR text: [OCR Skipped: Tesseract OCR not installed on host system]\n\n[MED005] IMAGE - Mar 02, 2025, 09:10 AM\nmedia/doc_003.png\n39.2 KB - Status: PARSED - SHA256: 98015aecd84d4526...\n\nOCR text: [OCR Skipped: Tesseract OCR not installed on host system]\n\n[MED003] IMAGE - Mar 02, 2025, 11:05 AM\nmedia/img_002.jpg\n120.1 KB - Status: PARSED - SHA256: 36623a5a835f82eb...\n\nAl CAPTION - UNVERIFIED\n\nlandscape image, 960x640, bright, predominantly red tones, no faces detected.\n\nReport generated 8/25/2026, 1:12:56 AM by Tharunvta.\n\nCase CASE-6 - Digital Forensics Investigation Report Page 3",
+      "file_metadata": {
+        "sha256": "af49202585f1b70d5835eb9412834b66472ddee2a11795768d121834889a237e",
+        "file_size_bytes": 19775,
+        "ext": "pdf"
       }
     }
   ]
