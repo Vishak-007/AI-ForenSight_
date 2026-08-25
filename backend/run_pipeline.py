@@ -130,33 +130,46 @@ def main():
 
     # 1. Parse UFDR XML
     run_stage(
-        stage_name="1/6 UFDR XML Parsing (parser.py)",
+        stage_name="1/7 UFDR XML Parsing (parser.py)",
         cmd=[py_exe, "parser.py", "--input-dir", input_dir],
         expected_output=parsed_path,
     )
 
     # 2. Document OCR
     run_stage(
-        stage_name="2/6 Document OCR (ocr_transcribe.py)",
+        stage_name="2/7 Document OCR (ocr_transcribe.py)",
         cmd=[py_exe, "ocr_transcribe.py", "--input-dir", input_dir],
         expected_output=ocr_path,
     )
 
-    # 3. Audio Transcription
+    # 3. Tanglish -> English translation of OCR text -- best-effort: it
+    # depends on a large (~2.4GB) NLLB model download that may not be
+    # available in every environment, and the raw OCR text is already
+    # usable/searchable on its own without a translation.
     run_stage(
-        stage_name="3/6 Audio Transcription (transcribe.py)",
+        stage_name="3/7 Tanglish->English Translation (translate.py)",
+        cmd=[py_exe, str(PROJECT_ROOT / "translate.py")],
+        expected_output=translated_path,
+        cwd=PROJECT_ROOT,
+        fatal=False,
+    )
+    translated_output_exists = (BACKEND_DIR / translated_path).exists()
+
+    # 4. Audio Transcription
+    run_stage(
+        stage_name="4/7 Audio Transcription (transcribe.py)",
         cmd=[py_exe, "transcribe.py", "--input-dir", input_dir],
         expected_output=transcripts_path,
     )
 
-    # 4. Image Analysis & Tagging
+    # 5. Image Analysis & Tagging
     run_stage(
-        stage_name="4/6 Image Analysis (image_extractor.py)",
+        stage_name="5/7 Image Analysis (image_extractor.py)",
         cmd=[py_exe, "image_extractor.py", "--input-dir", input_dir],
         expected_output=image_analysis_path,
     )
 
-    # 5. PostgreSQL Database Importer
+    # 6. PostgreSQL Database Importer
     # Run backend.import_data module from project root
     import_cmd = [
         py_exe,
@@ -169,9 +182,11 @@ def main():
         "--transcripts", str(BACKEND_DIR / transcripts_path),
         "--image-analysis", str(BACKEND_DIR / image_analysis_path),
     ]
+    if translated_output_exists:
+        import_cmd += ["--translated", str(BACKEND_DIR / translated_path)]
 
     import_output = run_stage(
-        stage_name="5/6 PostgreSQL Database Import (import_data.py)",
+        stage_name="6/7 PostgreSQL Database Import (import_data.py)",
         cmd=import_cmd,
         expected_output=None,
         cwd=PROJECT_ROOT,
@@ -181,11 +196,11 @@ def main():
     case_id_match = re.search(r"^CASE_ID=(\d+)$", import_output or "", re.MULTILINE)
     case_id = case_id_match.group(1) if case_id_match else None
 
-    # 6. Qdrant semantic-search indexing -- best-effort: the case data is
+    # 7. Qdrant semantic-search indexing -- best-effort: the case data is
     # already safely committed to Postgres by this point, so a failure here
     # (e.g. Qdrant not running) shouldn't be treated as a pipeline failure.
     run_stage(
-        stage_name="6/6 Semantic Search Indexing (vector_db.index)",
+        stage_name="7/7 Semantic Search Indexing (vector_db.index)",
         cmd=[py_exe, "-m", "backend.vector_db.index"],
         expected_output=None,
         cwd=PROJECT_ROOT,
@@ -200,6 +215,7 @@ def main():
     print(f"Input Dir:       {input_dir}")
     print(f"Parsed JSON:     {parsed_path}")
     print(f"OCR JSON:        {ocr_path}")
+    print(f"Translated JSON: {translated_path}{'' if translated_output_exists else ' (skipped)'}")
     print(f"Transcripts JSON:{transcripts_path}")
     print(f"Image JSON:      {image_analysis_path}")
     print("All outputs generated and imported into PostgreSQL database.")

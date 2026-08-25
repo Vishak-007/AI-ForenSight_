@@ -30,14 +30,15 @@ def get_ocr_results(case_id: Optional[int] = Query(None, description="Optional c
             with conn.cursor(row_factory=dict_row) as cursor:
                 if case_id is not None:
                     cursor.execute(
-                        "SELECT ocr_results.id, ocr_results.media_id, ocr_results.text "
+                        "SELECT ocr_results.id, ocr_results.media_id, ocr_results.text, "
+                        "ocr_results.translated_text "
                         "FROM ocr_results JOIN media ON media.id = ocr_results.media_id "
                         "WHERE media.case_id = %s ORDER BY ocr_results.id ASC;",
                         (case_id,),
                     )
                 else:
                     cursor.execute(
-                        "SELECT id, media_id, text FROM ocr_results ORDER BY id ASC;"
+                        "SELECT id, media_id, text, translated_text FROM ocr_results ORDER BY id ASC;"
                     )
                 ocr_records = cursor.fetchall()
                 return ocr_records

@@ -1,0 +1,2108 @@
+{
+  "folder_metadata": {
+    "folder_path": "C:\\Users\\Admin\\OneDrive\\Desktop\\AIForensight\\backend\\sample_ufdr",
+    "file_count": 7,
+    "total_size_bytes": 234883,
+    "last_modified": "2026-08-24T05:55:54.843860"
+  },
+  "documents": [
+    {
+      "media_id": "MED006",
+      "filename": "media/doc_001.png",
+      "raw_transcript": "CASE NOTE - INTERNAL\nDate: 2025-03-02\n\nSubject was seen meeting an\nunknown contact near the\nwarehouse at 21:00 hrs.\nFollow up required.",
+      "final_english": "CASE NOTE - INTERNAL\nDate: 2025-03-02 Subject was seen meeting an unknown contact near the warehouse at 21:00 hrs. Follow up required.",
+      "translation_trace": [
+        {
+          "stage": "english_detection",
+          "input": "was",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.82
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "seen",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.52
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "meeting",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.15
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "an",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.53
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "unknown",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.53
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "contact",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.99
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "near",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.29
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "the",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 7.73
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "warehouse",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.08
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "at",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.7
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "was",
+          "output": "was",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "seen",
+          "output": "seen",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "meeting",
+          "output": "meeting",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "an",
+          "output": "an",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "unknown",
+          "output": "unknown",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "contact",
+          "output": "contact",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "near",
+          "output": "near",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "the",
+          "output": "the",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "warehouse",
+          "output": "warehouse",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "at",
+          "output": "at",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "hrs",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 3.65
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "hrs",
+          "output": "hrs",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "up",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.39
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "required",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.02
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "up",
+          "output": "up",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "required",
+          "output": "required",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "grammar_correction",
+          "input": "__ENT0__: __ENT1__ __ENT2__ was seen meeting an unknown contact near the warehouse at __ENT3__:__ENT4__ hrs. __ENT5__ up required.",
+          "output": "__ENT0__: __ENT1__ __ENT2__ was seen meeting an unknown contact near the warehouse at __ENT3__:__ENT4__ hrs. __ENT5__ up required.",
+          "detail": {
+            "model": "vennify/t5-base-grammar-correction",
+            "entity_integrity_check": "passed",
+            "content_overlap_ratio": 1.0
+          }
+        }
+      ],
+      "file_metadata": {
+        "sha256": "f9e3cb12aef9772c20864379447fa040aec22f59930821e05833141b939264aa",
+        "file_size_bytes": 17671,
+        "width": 500,
+        "height": 260,
+        "format": "PNG",
+        "ext": "png"
+      }
+    },
+    {
+      "media_id": "MED004",
+      "filename": "media/doc_002.pdf",
+      "raw_transcript": "CASE NOTE - INTERNAL\nDate: 2025-03-02\n\nSubject was seen meeting an\nunknown contact near the\nwarehouse at 21:00 hrs.\nFollow up required.",
+      "final_english": "CASE NOTE - INTERNAL\nDate: 2025-03-02 Subject was seen meeting an unknown contact near the warehouse at 21:00 hrs. Follow up required.",
+      "translation_trace": [
+        {
+          "stage": "english_detection",
+          "input": "was",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.82
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "seen",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.52
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "meeting",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.15
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "an",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.53
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "unknown",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.53
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "contact",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.99
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "near",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.29
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "the",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 7.73
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "warehouse",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.08
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "at",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.7
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "was",
+          "output": "was",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "seen",
+          "output": "seen",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "meeting",
+          "output": "meeting",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "an",
+          "output": "an",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "unknown",
+          "output": "unknown",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "contact",
+          "output": "contact",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "near",
+          "output": "near",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "the",
+          "output": "the",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "warehouse",
+          "output": "warehouse",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "at",
+          "output": "at",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "hrs",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 3.65
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "hrs",
+          "output": "hrs",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "up",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.39
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "required",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.02
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "up",
+          "output": "up",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "required",
+          "output": "required",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "grammar_correction",
+          "input": "__ENT0__: __ENT1__ __ENT2__ was seen meeting an unknown contact near the warehouse at __ENT3__:__ENT4__ hrs. __ENT5__ up required.",
+          "output": "__ENT0__: __ENT1__ __ENT2__ was seen meeting an unknown contact near the warehouse at __ENT3__:__ENT4__ hrs. __ENT5__ up required.",
+          "detail": {
+            "model": "vennify/t5-base-grammar-correction",
+            "entity_integrity_check": "passed",
+            "content_overlap_ratio": 1.0
+          }
+        }
+      ],
+      "file_metadata": {
+        "sha256": "641b9784405a7ec8fca2af4d27e36fc2950ac3d6f030785c9e31d7d546fc47aa",
+        "file_size_bytes": 15310,
+        "ext": "pdf"
+      }
+    },
+    {
+      "media_id": "MED005",
+      "filename": "media/doc_003.png",
+      "raw_transcript": "Why Digital Forensics Matters Today\n\nEvery phone we carry quietly records where we go, who we talk\nto, and what we search for. When a crime is committed, this\ntrail of data often becomes the strongest evidence available.\n\nInvestigators extract this data using specialized tools that\npull messages, call logs, photos, and app data off a seized\ndevice without altering the original evidence.\n\nThe real challenge is not collecting the data but making sense\n\nof it quickly. A single extraction can contain thousands of\nmessages and files, far more than any human can review by hand\nin time.",
+      "final_english": "Why Digital Forensics Matters Today Every phone we carry quietly records where we go, who we talk to, and what we search for. When a crime is committed, this trail of data often becomes the strongest evidence available. Investigators extract this data using specialized tools that pull messages, call logs, photos, and app data off a seized device without altering the original evidence. The real challenge is not collecting the data but making sense of it quickly. A single extraction can contain thousands of messages and files, far more than any human can review by hand in time.",
+      "translation_trace": [
+        {
+          "stage": "english_detection",
+          "input": "Why",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.93
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "Why",
+          "output": "Why",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "Today",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.55
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "Today",
+          "output": "Today",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "phone",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.3
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "we",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.54
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "carry",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.89
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "quietly",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.15
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "records",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.9
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "where",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.0
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "we",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.54
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "go",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.03
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "phone",
+          "output": "phone",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "we",
+          "output": "we",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "carry",
+          "output": "carry",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "quietly",
+          "output": "quietly",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "records",
+          "output": "records",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "where",
+          "output": "where",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "we",
+          "output": "we",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "go",
+          "output": "go",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "who",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.34
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "we",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.54
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "talk",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.42
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "to",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 7.43
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "who",
+          "output": "who",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "we",
+          "output": "we",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "talk",
+          "output": "talk",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "to",
+          "output": "to",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "and",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 7.41
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "what",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.38
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "we",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.54
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "search",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.96
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "for",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 7.01
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "and",
+          "output": "and",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "what",
+          "output": "what",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "we",
+          "output": "we",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "search",
+          "output": "search",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "for",
+          "output": "for",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "When",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.37
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "a",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 7.36
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "crime",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.89
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "is",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 7.07
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "committed",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.65
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "When",
+          "output": "When",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "a",
+          "output": "a",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "crime",
+          "output": "crime",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "is",
+          "output": "is",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "committed",
+          "output": "committed",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "this",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.82
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "trail",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.45
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "of",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 7.4
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "data",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.34
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "often",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.41
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "becomes",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.83
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "the",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 7.73
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "strongest",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.12
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "evidence",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.14
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "available",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.28
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "this",
+          "output": "this",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "trail",
+          "output": "trail",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "of",
+          "output": "of",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "data",
+          "output": "data",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "often",
+          "output": "often",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "becomes",
+          "output": "becomes",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "the",
+          "output": "the",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "strongest",
+          "output": "strongest",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "evidence",
+          "output": "evidence",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "available",
+          "output": "available",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "extract",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.02
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "this",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.82
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "data",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.34
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "using",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.47
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "specialized",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.07
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "tools",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.59
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "that",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 7.01
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "pull",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.82
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "messages",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.54
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "extract",
+          "output": "extract",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "this",
+          "output": "this",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "data",
+          "output": "data",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "using",
+          "output": "using",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "specialized",
+          "output": "specialized",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "tools",
+          "output": "tools",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "that",
+          "output": "that",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "pull",
+          "output": "pull",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "messages",
+          "output": "messages",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "call",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.51
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "logs",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 3.81
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "call",
+          "output": "call",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "logs",
+          "output": "logs",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "photos",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.83
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "photos",
+          "output": "photos",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "and",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 7.41
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "app",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.86
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "data",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.34
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "off",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.93
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "a",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 7.36
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "seized",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.03
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "device",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.67
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "without",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.69
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "altering",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 3.59
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "the",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 7.73
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "original",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.16
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "evidence",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.14
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "and",
+          "output": "and",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "app",
+          "output": "app",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "data",
+          "output": "data",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "off",
+          "output": "off",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "a",
+          "output": "a",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "seized",
+          "output": "seized",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "device",
+          "output": "device",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "without",
+          "output": "without",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "altering",
+          "output": "altering",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "the",
+          "output": "the",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "original",
+          "output": "original",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "evidence",
+          "output": "evidence",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "The",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 7.73
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "real",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.6
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "challenge",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.88
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "is",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 7.07
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "not",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.69
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "collecting",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.18
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "the",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 7.73
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "data",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.34
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "but",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.63
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "making",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.54
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "sense",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.19
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "of",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 7.4
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "it",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.95
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "quickly",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.0
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "The",
+          "output": "The",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "real",
+          "output": "real",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "challenge",
+          "output": "challenge",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "is",
+          "output": "is",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "not",
+          "output": "not",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "collecting",
+          "output": "collecting",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "the",
+          "output": "the",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "data",
+          "output": "data",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "but",
+          "output": "but",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "making",
+          "output": "making",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "sense",
+          "output": "sense",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "of",
+          "output": "of",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "it",
+          "output": "it",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "quickly",
+          "output": "quickly",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "A",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 7.36
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "single",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.41
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "extraction",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 3.8
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "can",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.46
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "contain",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.5
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "thousands",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.77
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "of",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 7.4
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "messages",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.54
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "and",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 7.41
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "files",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 4.46
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "A",
+          "output": "A",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "single",
+          "output": "single",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "extraction",
+          "output": "extraction",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "can",
+          "output": "can",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "contain",
+          "output": "contain",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "thousands",
+          "output": "thousands",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "of",
+          "output": "of",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "messages",
+          "output": "messages",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "and",
+          "output": "and",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "files",
+          "output": "files",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "far",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.5
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "more",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.36
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "than",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.13
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "any",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.07
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "human",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.35
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "can",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.46
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "review",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.12
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "by",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.66
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "hand",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 5.41
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "in",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 7.27
+          }
+        },
+        {
+          "stage": "english_detection",
+          "input": "time",
+          "output": "english",
+          "detail": {
+            "reason": "wordfreq_threshold",
+            "zipf": 6.29
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "far",
+          "output": "far",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "more",
+          "output": "more",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "than",
+          "output": "than",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "any",
+          "output": "any",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "human",
+          "output": "human",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "can",
+          "output": "can",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "review",
+          "output": "review",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "by",
+          "output": "by",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "hand",
+          "output": "hand",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "in",
+          "output": "in",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "symspell_correction",
+          "input": "time",
+          "output": "time",
+          "detail": {
+            "reason": "already_correct"
+          }
+        },
+        {
+          "stage": "grammar_correction",
+          "input": "Why __ENT0__ Today __ENT1__ phone we carry quietly records where we go, who we talk to, and what we search for. When a crime is committed, this trail of data often becomes the strongest evidence available. __ENT2__ extract this data using specialized tools that pull messages, call logs, photos, and app data off a seized device without altering the original evidence. The real challenge is not collecting the data but making sense of it quickly. A single extraction can contain thousands of messages and files, far more than any human can review by hand in time.",
+          "output": "Why __ENT0__ Today __ENT1__ phone we carry quietly records where we go, who we talk to, and what we search for. When a crime is committed, this trail of data often becomes the strongest evidence available. __ENT2__ extract this data using specialized tools that pull messages, call logs, photos, and app data off a seized device without altering the original evidence. The real challenge is not collecting the data but making sense of it quickly. A single extraction can contain thousands of messages and files, far more than any human can review by hand in time.",
+          "detail": {
+            "reason": "content_overlap_check_failed",
+            "content_overlap_ratio": 0.7586206896551724,
+            "model_output_discarded": "Why __ENT0__ Today, a __ENT1__ phone we carry quietly records where we go, who we talk to, and what we search for. When a crime is committed, this trail of data often becomes the strongest evidence available. __ENT2__ extract this data using specialized tools that pull messages, call logs, photos, and app data off a seized device without altering the original evidence. The real challenge is not collecting the data but making sense of it quickly."
+          }
+        }
+      ],
+      "file_metadata": {
+        "sha256": "98015aecd84d45269b8c671c36c86c06308b948a5e83d9fb15c35c2012f7e90e",
+        "file_size_bytes": 40163,
+        "width": 640,
+        "height": 448,
+        "format": "PNG",
+        "ext": "png"
+      }
+    }
+  ]
+}

@@ -109,6 +109,8 @@ export interface OcrResultRecord {
   id: number;
   media_id: number;
   text: string;
+  /** English translation of `text` (from translate.py), null if not translated. */
+  translated_text: string | null;
 }
 
 export interface TranscriptionRecord {

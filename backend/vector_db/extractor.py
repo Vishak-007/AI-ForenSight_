@@ -1,11 +1,12 @@
 """Reads the pipeline's JSON outputs and yields the searchable text records
 that get embedded into Qdrant.
 
-Field selection: messages.text, OCR transcript_text, audio transcript text,
-image heuristic context, and above-threshold CLIP evidence tags -- these are
-the only free-text fields the pipeline produces; everything else
-(dimensions, hashes, timestamps) is structured metadata, not something worth
-a semantic embedding.
+Field selection: messages.text, OCR transcript_text (translated to English
+via translate.py's output when available), audio transcript text, image
+heuristic context, and above-threshold CLIP evidence tags -- these are the
+only free-text fields the pipeline produces; everything else (dimensions,
+hashes, timestamps) is structured metadata, not something worth a semantic
+embedding.
 """
 
 import json
@@ -56,6 +57,13 @@ def extract_records(backend_dir: Path = BACKEND_DIR) -> list[SearchableRecord]:
     ocr = _load(backend_dir / "ocr_output.json")
     transcripts = _load(backend_dir / "transcripts_output.json")
     image_analysis = _load(backend_dir / "image_analysis_output.json")
+    translated = _load(backend_dir / "translated_output.json")
+
+    translated_by_media = {
+        doc["media_id"]: doc["final_english"].strip()
+        for doc in translated.get("documents", [])
+        if doc.get("media_id") and (doc.get("final_english") or "").strip()
+    }
 
     records: list[SearchableRecord] = []
 
@@ -77,16 +85,22 @@ def extract_records(backend_dir: Path = BACKEND_DIR) -> list[SearchableRecord]:
         ))
 
     for doc in ocr.get("documents", []):
-        text = (doc.get("transcript_text") or "").strip()
-        if not text or text.startswith(OCR_SKIP_MARKER):
+        raw_text = (doc.get("transcript_text") or "").strip()
+        if not raw_text or raw_text.startswith(OCR_SKIP_MARKER):
             continue
+        # Embed the English translation when one exists -- the embedding
+        # model was trained on English text, so semantic search over
+        # Tanglish/code-mixed source text is far weaker than over its
+        # translated form. Falls back to the raw OCR text untranslated.
+        translated_text = translated_by_media.get(doc["media_id"])
+        text = translated_text or raw_text
         records.append(SearchableRecord(
             source_type="ocr_document",
             source_table="ocr_results",
             business_id=doc["media_id"],
             media_id=doc["media_id"],
             text=text,
-            metadata={"filename": doc.get("filename")},
+            metadata={"filename": doc.get("filename"), "translated": bool(translated_text)},
         ))
 
     for tr in transcripts.get("transcripts", []):

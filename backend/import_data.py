@@ -123,11 +123,18 @@ def import_data(
     ocr_path: str | None = None,
     transcripts_path: str | None = None,
     image_analysis_path: str | None = None,
+    translated_path: str | None = None,
 ) -> tuple[int, dict[str, int], list[str]]:
     parsed = load_json(parsed_path)
     ocr = load_json(ocr_path) if ocr_path else {}
     transcripts = load_json(transcripts_path) if transcripts_path else {}
     image_analysis = load_json(image_analysis_path) if image_analysis_path else {}
+    translated = load_json(translated_path) if translated_path else {}
+    translated_text_by_media = {
+        doc["media_id"]: doc.get("final_english")
+        for doc in rows(translated.get("documents", []), "translated documents")
+        if doc.get("media_id") and isinstance(doc.get("final_english"), str) and doc.get("final_english").strip()
+    }
     counts = {
         "Cases": 0,
         "Devices": 0,
@@ -269,12 +276,19 @@ def import_data(
                 if not isinstance(text, str):
                     skipped.append(f"OCR result {item.get('media_id')}: transcript_text is not text")
                     continue
+                translated_text = translated_text_by_media.get(item.get("media_id"))
                 cursor.execute("SELECT id FROM ocr_results WHERE media_id = %s ORDER BY id LIMIT 1", (media_pk,))
                 existing = cursor.fetchone()
                 if existing:
-                    cursor.execute("UPDATE ocr_results SET text = %s WHERE id = %s", (text, existing[0]))
+                    cursor.execute(
+                        "UPDATE ocr_results SET text = %s, translated_text = %s WHERE id = %s",
+                        (text, translated_text, existing[0]),
+                    )
                 else:
-                    cursor.execute("INSERT INTO ocr_results (media_id, text) VALUES (%s, %s)", (media_pk, text))
+                    cursor.execute(
+                        "INSERT INTO ocr_results (media_id, text, translated_text) VALUES (%s, %s, %s)",
+                        (media_pk, text, translated_text),
+                    )
                 counts["OCR results"] += 1
 
             for item in rows(transcripts.get("transcripts", []), "transcripts"):
@@ -346,10 +360,12 @@ def main() -> None:
     parser.add_argument("--ocr")
     parser.add_argument("--transcripts")
     parser.add_argument("--image-analysis")
+    parser.add_argument("--translated")
     args = parser.parse_args()
     try:
         case_id, counts, skipped = import_data(args.case_name, args.source_file, args.parsed,
-                                                args.ocr, args.transcripts, args.image_analysis)
+                                                args.ocr, args.transcripts, args.image_analysis,
+                                                args.translated)
     except (OSError, ValueError, json.JSONDecodeError, RuntimeError) as error:
         print(f"Import failed and was rolled back: {error}")
         raise SystemExit(1) from error
