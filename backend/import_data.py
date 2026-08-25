@@ -268,15 +268,8 @@ def import_data(
                     media_ids[media_id] = found[0]
                 return media_ids[media_id]
 
-            for item in rows(ocr.get("documents", []), "documents"):
-                media_pk = media_reference(item.get("media_id"), "OCR result")
-                if media_pk is None:
-                    continue
-                text = item.get("transcript_text")
-                if not isinstance(text, str):
-                    skipped.append(f"OCR result {item.get('media_id')}: transcript_text is not text")
-                    continue
-                translated_text = translated_text_by_media.get(item.get("media_id"))
+            def upsert_ocr_result(media_pk: int, media_id: str, text: str) -> None:
+                translated_text = translated_text_by_media.get(media_id)
                 cursor.execute("SELECT id FROM ocr_results WHERE media_id = %s ORDER BY id LIMIT 1", (media_pk,))
                 existing = cursor.fetchone()
                 if existing:
@@ -290,6 +283,16 @@ def import_data(
                         (media_pk, text, translated_text),
                     )
                 counts["OCR results"] += 1
+
+            for item in rows(ocr.get("documents", []), "documents"):
+                media_pk = media_reference(item.get("media_id"), "OCR result")
+                if media_pk is None:
+                    continue
+                text = item.get("transcript_text")
+                if not isinstance(text, str):
+                    skipped.append(f"OCR result {item.get('media_id')}: transcript_text is not text")
+                    continue
+                upsert_ocr_result(media_pk, item.get("media_id"), text)
 
             for item in rows(transcripts.get("transcripts", []), "transcripts"):
                 media_pk = media_reference(item.get("media_id"), "transcription")
@@ -349,6 +352,10 @@ def import_data(
                         ON CONFLICT (media_id, tag) DO UPDATE SET confidence = EXCLUDED.confidence
                         """, (media_pk, tag.strip(), confidence_value))
                     counts["Image tags"] += 1
+
+                ocr_text = item.get("ocr_text")
+                if isinstance(ocr_text, str) and ocr_text.strip() and not ocr_text.startswith("[OCR Skipped"):
+                    upsert_ocr_result(media_pk, item.get("media_id"), ocr_text)
     return case_id, counts, skipped
 
 

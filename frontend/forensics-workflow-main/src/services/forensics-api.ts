@@ -10,6 +10,7 @@
  */
 
 import type { Entity, Flag, ReportData, TimelineRecord } from "@/lib/report-types";
+import { buildContactPhoneMap, describeMediaOrigin, indexByKey } from "@/lib/media-origin";
 
 /* ------------------------------- contracts ------------------------------- */
 
@@ -140,6 +141,10 @@ export interface ImageTagRecord {
 
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
+
+export function getMediaFileUrl(mediaId: number): string {
+  return `${API_BASE_URL}/api/media/${mediaId}/file`;
+}
 
 export async function getCases(): Promise<CaseRecord[]> {
   try {
@@ -607,6 +612,10 @@ export async function getReportData(caseId: string | number): Promise<ReportData
       detail: `Duration: ${c.duration_seconds != null ? `${c.duration_seconds}s` : "Unknown"} · Type: ${c.type || "unknown"}`,
     }));
 
+    const contactByPhone = buildContactPhoneMap(contacts);
+    const messagesById = indexByKey(messages, (m) => m.message_id);
+    const callsById = indexByKey(calls, (c) => c.call_id);
+
     const mediaEvents: TimelineRecord[] = media.map((m) => {
       const ocr = ocrResults.find((o) => o.media_id === m.id);
       const tr = transcriptions.find((t) => t.media_id === m.id);
@@ -623,8 +632,8 @@ export async function getReportData(caseId: string | number): Promise<ReportData
         headline: m.filename,
         detail: `${formatFileSize(m.file_size_bytes || 0)} · Status: ${m.status || "PARSED"}${
           m.sha256 ? ` · SHA256: ${m.sha256.slice(0, 16)}...` : ""
-        }`,
-        media_uri: null,
+        } · ${describeMediaOrigin(m, messagesById, callsById, contactByPhone)}`,
+        media_uri: getMediaFileUrl(m.id),
         ocr_text: ocr ? ocr.text : null,
         transcript: tr ? tr.text : null,
         caption: ia ? (ia.context || (ia.width && ia.height ? `${ia.width}x${ia.height} ${ia.format || ""}` : null)) : null,

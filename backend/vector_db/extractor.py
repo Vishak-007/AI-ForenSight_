@@ -26,7 +26,7 @@ TAG_CONFIDENCE_THRESHOLD = 0.25
 
 @dataclass
 class SearchableRecord:
-    source_type: str          # message | ocr_document | audio_transcript | image_context | image_tags
+    source_type: str          # message | ocr_document | audio_transcript | image_context | image_tags | image_ocr
     source_table: str         # PostgreSQL table this content ultimately lands in
     business_id: str          # UFDR-level id (message_id or media_id)
     media_id: Optional[str]
@@ -131,6 +131,19 @@ def extract_records(backend_dir: Path = BACKEND_DIR) -> list[SearchableRecord]:
                     "face_count": img.get("face_count"),
                     "image_metadata": img.get("metadata"),
                 },
+            ))
+
+        ocr_text_raw = (img.get("ocr_text") or "").strip()
+        if ocr_text_raw and not ocr_text_raw.startswith(OCR_SKIP_MARKER):
+            translated_text = translated_by_media.get(media_id)
+            text = translated_text or ocr_text_raw
+            records.append(SearchableRecord(
+                source_type="image_ocr",
+                source_table="ocr_results",
+                business_id=media_id,
+                media_id=media_id,
+                text=text,
+                metadata={"translated": bool(translated_text)},
             ))
 
         tags = {

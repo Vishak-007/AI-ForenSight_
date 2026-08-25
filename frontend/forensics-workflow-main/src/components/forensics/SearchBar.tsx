@@ -29,8 +29,8 @@ export function SearchBar({
             type="search"
             value={query}
             onChange={(e) => onQueryChange(e.target.value)}
-            placeholder="Search evidence..."
-            aria-label="Search evidence"
+            placeholder="Search all evidence — messages, filenames, OCR text, transcripts, objects..."
+            aria-label="Search all evidence"
             className="focus-ring h-12 w-full rounded-lg border border-input bg-background pl-11 pr-10 text-base text-foreground placeholder:text-muted-foreground focus:border-brand-accent"
           />
           {query.length > 0 && (
@@ -62,7 +62,7 @@ export function SearchBar({
       >
         <span>
           Showing <span className="font-semibold text-foreground">{visibleCount}</span> of{" "}
-          <span className="font-semibold text-foreground">{totalCount}</span> evidence records
+          <span className="font-semibold text-foreground">{totalCount}</span> evidence items
         </span>
         {activeEntity && (
           <span className="label-caps rounded-md border border-ai-border bg-ai px-2 py-0.5 text-brand-dark">

@@ -8,6 +8,8 @@ import cv2
 import numpy as np
 from PIL import Image, ExifTags
 
+import ocr_transcribe
+
 PARSED_INPUT_PATH = "parsed_output.json"
 OUTPUT_PATH = "image_analysis_output.json"
 MEDIA_DIR = "sample_ufdr"          # image files live under here, per parser.py
@@ -343,12 +345,17 @@ def analyze_all(image_records):
         context = build_heuristic_context(file_path, metadata, len(faces))
         tags = EvidenceTagger.classify(file_path)
 
+        ocr_text = None
+        if tags.get("screenshot", 0) >= TAG_CONFIDENCE_THRESHOLD:
+            ocr_text = ocr_transcribe.ocr_document(file_path)
+
         analyses.append({
             "media_id": media_id,
             "metadata": metadata,
             "context": context,
             "face_count": len(faces),
             "tags": tags,
+            "ocr_text": ocr_text,
         })
 
     all_faces, persons = cluster_faces(all_faces)

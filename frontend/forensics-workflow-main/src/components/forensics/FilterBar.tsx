@@ -5,8 +5,9 @@ import { cn } from "@/lib/utils";
 const KINDS = [
   { value: "message", label: "Messages" },
   { value: "call", label: "Calls" },
-  { value: "audio", label: "Audio" },
   { value: "image", label: "Images" },
+  { value: "document", label: "Documents" },
+  { value: "audio", label: "Audio" },
 ];
 
 function Chip({
