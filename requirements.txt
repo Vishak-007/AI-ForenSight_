@@ -10,3 +10,5 @@ opencv-python
 scikit-learn
 torch
 transformers
+qdrant-client
+sentence-transformers==3.0.1
