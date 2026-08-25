@@ -20,5 +20,8 @@ opencv-python
 scikit-learn
 torch
 transformers
+fastapi
+uvicorn
+python-multipart
 qdrant-client
 sentence-transformers==3.0.1
