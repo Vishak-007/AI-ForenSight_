@@ -205,7 +205,25 @@ export function InvestigationProvider({ children }: { children: ReactNode }) {
               progress: 100,
               statusMessage: "Analysis complete.",
               completedAt: new Date().toISOString(),
+              activeCaseId: status.caseId ?? s.activeCaseId,
             }));
+
+            if (status.caseId != null) {
+              try {
+                const report = await getReportData(status.caseId);
+                setState((s) => ({ ...s, reportData: report }));
+              } catch (err) {
+                setState((s) => ({
+                  ...s,
+                  error: message(err, "Analysis completed, but the report data could not be loaded."),
+                }));
+              }
+            } else {
+              setState((s) => ({
+                ...s,
+                error: "Analysis completed, but no case id was returned -- the report could not be loaded.",
+              }));
+            }
           } else if (status.state === "failed") {
             stopPolling();
             setState((s) => ({

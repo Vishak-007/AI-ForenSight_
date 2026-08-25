@@ -15,6 +15,7 @@ the same pattern as audio, just with a video-specific metadata reader
 (e.g. moviepy or ffprobe) instead of `wave`.
 """
 
+import argparse
 import xmltodict
 import json
 import hashlib
@@ -25,6 +26,13 @@ from PIL import Image
 BASE_DIR = "sample_ufdr"
 XML_PATH = os.path.join(BASE_DIR, "report.xml")
 OUTPUT_PATH = "parsed_output.json"
+
+
+def parse_args():
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument("--input-dir", default=BASE_DIR,
+                    help=f"folder containing report.xml and media/ (default: {BASE_DIR!r})")
+    return p.parse_args()
 
 
 def sha256_of_file(path):
@@ -110,6 +118,11 @@ def parse_media_item(item):
 
 
 def main():
+    global BASE_DIR, XML_PATH
+    args = parse_args()
+    BASE_DIR = args.input_dir
+    XML_PATH = os.path.join(BASE_DIR, "report.xml")
+
     with open(XML_PATH, "r", encoding="utf-8") as f:
         raw = xmltodict.parse(f.read())
 

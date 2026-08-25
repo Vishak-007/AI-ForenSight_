@@ -19,6 +19,7 @@ import json
 import logging
 import os
 import sys
+from pathlib import Path
 
 from translation import translate_transcript_verbose
 from translation.errors import TranslationDependencyError
@@ -26,8 +27,13 @@ from translation.logging_utils import configure_logging, get_logger
 
 # ---- Config ---------------------------------------------------------------
 
-OCR_INPUT_PATH = "ocr_output.json"
-OUTPUT_PATH = "translated_output.json"
+# Resolved relative to this file (repo root), not the process's working
+# directory -- ocr_output.json lives in backend/ regardless of whether this
+# script is run from the repo root (as its own docstring says) or invoked
+# with an explicit path by run_pipeline.py.
+BACKEND_DIR = Path(__file__).resolve().parent / "backend"
+OCR_INPUT_PATH = BACKEND_DIR / "ocr_output.json"
+OUTPUT_PATH = BACKEND_DIR / "translated_output.json"
 
 logger = get_logger(__name__)
 

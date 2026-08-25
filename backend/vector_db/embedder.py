@@ -25,7 +25,7 @@ def get_model() -> SentenceTransformer:
 
 
 def embedding_dimension() -> int:
-    return get_model().get_sentence_embedding_dimension()
+    return get_model().get_embedding_dimension()
 
 
 def embed_texts(texts: list[str]) -> list[list[float]]:

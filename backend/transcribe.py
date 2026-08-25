@@ -11,6 +11,7 @@ Run from inside the ufdr_prototype/ folder:
     python transcribe.py
 """
 
+import argparse
 import json
 import os
 import sys
@@ -32,6 +33,13 @@ MEDIA_DIR = "sample_ufdr"          # audio files live under here, per parser.py
 WHISPER_MODEL_SIZE = "base"        # "tiny" is faster/rougher if you need speed
 WHISPER_DEVICE = "cpu"             # change to "cuda" if you have a GPU set up
 WHISPER_COMPUTE_TYPE = "int8"      # good speed/accuracy tradeoff on CPU
+
+
+def parse_args():
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument("--input-dir", default=MEDIA_DIR,
+                    help=f"folder containing the media/ referenced by parsed_output.json (default: {MEDIA_DIR!r})")
+    return p.parse_args()
 
 
 def load_parsed_data(path):
@@ -94,6 +102,10 @@ def transcribe_all(audio_records, model):
 
 
 def main():
+    global MEDIA_DIR
+    args = parse_args()
+    MEDIA_DIR = args.input_dir
+
     print("Loading parsed data...")
     parsed_data = load_parsed_data(PARSED_INPUT_PATH)
 

@@ -9,8 +9,7 @@
  * same shapes. No UI component imports anything else.
  */
 
-import type { ReportData } from "@/lib/report-types";
-import { mockReport } from "@/data/mock-report";
+import type { Entity, Flag, ReportData, TimelineRecord } from "@/lib/report-types";
 
 /* ------------------------------- contracts ------------------------------- */
 
@@ -41,6 +40,8 @@ export interface AnalysisStatus {
   stages: AnalysisStage[];
   message: string;
   error?: string;
+  /** Postgres cases.id the pipeline imported this case as, once known. */
+  caseId: number | null;
 }
 
 export class ForensicsApiError extends Error {}
@@ -429,7 +430,10 @@ export async function uploadUFDR(
       caseId: data.job_id,
       jobId: data.job_id,
       caseName: data.case_name || caseName,
-      deviceId: mockReport.device_id ?? null,
+      // Not known until the background pipeline finishes and reports the
+      // Postgres case id (see getAnalysisStatus's caseId) -- report-types'
+      // normalizeReport falls back to the real device_id once that lands.
+      deviceId: null,
       fileName: file.name,
       fileSize: file.size,
       uploadedAt: new Date().toISOString(),
@@ -499,6 +503,7 @@ export async function getAnalysisStatus(jobId: string): Promise<AnalysisStatus> 
           ? (data.error_message || "Forensic pipeline processing failed.")
           : "Processing UFDR extraction pipeline in background...",
       error: backendStatus === "failed" ? (data.error_message || "Forensic pipeline processing failed.") : undefined,
+      caseId: typeof data.case_id === "number" ? data.case_id : null,
     };
   } catch (error) {
     if (error instanceof ForensicsApiError) {

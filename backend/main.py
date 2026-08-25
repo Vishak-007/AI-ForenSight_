@@ -14,6 +14,11 @@ except ImportError:
     from database.connection import get_connection
 
 try:
+    from .database.initialize_schema import initialize_schema
+except ImportError:
+    from database.initialize_schema import initialize_schema
+
+try:
     from .routes.cases import router as cases_router
 except ImportError:
     from routes.cases import router as cases_router
@@ -75,14 +80,25 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# Configure CORS for future frontend integration
+# allow_credentials=True cannot be combined with a wildcard origin (browsers
+# reject it) -- the frontend's mock auth never sends cookies/credentialed
+# requests anyway, so there's nothing that actually needs allow_credentials.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.on_event("startup")
+def _ensure_schema() -> None:
+    """Create the UFDR tables/indexes if they don't exist yet (idempotent:
+    every statement is CREATE TABLE/INDEX IF NOT EXISTS), so a fresh
+    database doesn't need a separate manual setup step before first use."""
+    initialize_schema()
+
 
 app.include_router(cases_router)
 app.include_router(devices_router)
