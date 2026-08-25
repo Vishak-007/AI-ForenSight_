@@ -98,7 +98,8 @@
       "metadata": {
         "width": 500,
         "height": 260,
-        "format": "PNG"
+        "format": "PNG",
+        "ext": "png"
       },
       "status": "PARSED"
     },
@@ -112,8 +113,7 @@
       "sha256": "641b9784405a7ec8fca2af4d27e36fc2950ac3d6f030785c9e31d7d546fc47aa",
       "file_size_bytes": 15310,
       "metadata": {
-        "format": "PDF",
-        "page_count": 1
+        "ext": "pdf"
       },
       "status": "PARSED"
     },
@@ -129,7 +129,8 @@
       "metadata": {
         "width": 640,
         "height": 448,
-        "format": "PNG"
+        "format": "PNG",
+        "ext": "png"
       },
       "status": "PARSED"
     }

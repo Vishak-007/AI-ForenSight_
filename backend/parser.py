@@ -1,14 +1,18 @@
 """
-UFDR parser module.
+UFDR parser prototype.
 
 Input:  a UFDR-style XML export (report.xml) + its media/ folder.
 Output: a single normalized JSON file containing every record type,
         with media records enriched by type-specific metadata and a
-        SHA-256 hash (for evidentiary integrity).
+        SHA-256 hash (so tampering can be detected later — this is the
+        "evidentiary integrity" hook, cheap to add now, expensive to
+        bolt on later).
 
-Supported media types: image, audio, document.
-Document records may be an image (jpg/png/etc.) or a PDF; text extraction
-for both happens later in ocr_transcribe.py.
+Supported media types right now: image, audio, document.
+Video is intentionally NOT handled yet — see the `video` branch below,
+which just records that it was seen and skipped. Wiring it up later is
+the same pattern as audio, just with a video-specific metadata reader
+(e.g. moviepy or ffprobe) instead of `wave`.
 """
 
 import xmltodict
@@ -17,7 +21,6 @@ import hashlib
 import wave
 import os
 from PIL import Image
-from pypdf import PdfReader
 
 BASE_DIR = "sample_ufdr"
 XML_PATH = os.path.join(BASE_DIR, "report.xml")
@@ -48,17 +51,23 @@ def read_audio_metadata(path):
         }
 
 
-def read_pdf_metadata(path):
-    reader = PdfReader(path)
-    return {"format": "PDF", "page_count": len(reader.pages)}
-
-
-PDF_EXTENSIONS = (".pdf",)
+def read_document_metadata(path):
+    """PNG/JPEG documents get image metadata; anything else (e.g. PDF)
+    just gets its file extension recorded — no PDF page-count reader
+    is wired up yet."""
+    ext = os.path.splitext(path)[1].lower().lstrip(".")
+    if ext in ("png", "jpg", "jpeg"):
+        try:
+            with Image.open(path) as img:
+                return {"width": img.width, "height": img.height, "format": img.format, "ext": ext}
+        except Exception:
+            pass
+    return {"ext": ext}
 
 
 def as_list(x):
     """xmltodict returns a dict for a single child and a list for multiple
-    children with the same tag - this normalizes both cases to a list."""
+    children with the same tag — this normalizes both cases to a list."""
     if x is None:
         return []
     return x if isinstance(x, list) else [x]
@@ -89,12 +98,10 @@ def parse_media_item(item):
         record["metadata"] = read_audio_metadata(file_path)
         record["status"] = "PARSED"
     elif item["type"] == "document":
-        if file_path.lower().endswith(PDF_EXTENSIONS):
-            record["metadata"] = read_pdf_metadata(file_path)
-        else:
-            record["metadata"] = read_image_metadata(file_path)
+        record["metadata"] = read_document_metadata(file_path)
         record["status"] = "PARSED"
     elif item["type"] == "video":
+        # Not implemented yet — deliberately skipped for today's scope.
         record["status"] = "SKIPPED_VIDEO_NOT_IMPLEMENTED"
     else:
         record["status"] = f"UNKNOWN_TYPE:{item['type']}"

@@ -1,0 +1,46 @@
+{
+  "folder_metadata": {
+    "folder_path": "sample_ufdr",
+    "file_count": 7,
+    "total_size_bytes": 234883,
+    "last_modified": "2026-08-24T12:36:18.581065"
+  },
+  "documents": [
+    {
+      "media_id": "MED006",
+      "filename": "media/doc_001.png",
+      "transcript_text": "[OCR Skipped: Tesseract OCR not installed on host system]",
+      "file_metadata": {
+        "sha256": "f9e3cb12aef9772c20864379447fa040aec22f59930821e05833141b939264aa",
+        "file_size_bytes": 17671,
+        "width": 500,
+        "height": 260,
+        "format": "PNG",
+        "ext": "png"
+      }
+    },
+    {
+      "media_id": "MED004",
+      "filename": "media/doc_002.pdf",
+      "transcript_text": "[OCR Skipped: Tesseract OCR not installed on host system]",
+      "file_metadata": {
+        "sha256": "641b9784405a7ec8fca2af4d27e36fc2950ac3d6f030785c9e31d7d546fc47aa",
+        "file_size_bytes": 15310,
+        "ext": "pdf"
+      }
+    },
+    {
+      "media_id": "MED005",
+      "filename": "media/doc_003.png",
+      "transcript_text": "[OCR Skipped: Tesseract OCR not installed on host system]",
+      "file_metadata": {
+        "sha256": "98015aecd84d45269b8c671c36c86c06308b948a5e83d9fb15c35c2012f7e90e",
+        "file_size_bytes": 40163,
+        "width": 640,
+        "height": 448,
+        "format": "PNG",
+        "ext": "png"
+      }
+    }
+  ]
+}

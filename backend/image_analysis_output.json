@@ -1,0 +1,29 @@
+{
+  "images": [
+    {
+      "media_id": "MED001",
+      "metadata": {
+        "width": 320,
+        "height": 240,
+        "format": "JPEG"
+      },
+      "context": "landscape image, 320x240, dark, predominantly neutral/grayscale tones, no faces detected.",
+      "face_count": 0,
+      "tags": {},
+      "faces": []
+    },
+    {
+      "media_id": "MED003",
+      "metadata": {
+        "width": 960,
+        "height": 640,
+        "format": "JPEG"
+      },
+      "context": "landscape image, 960x640, bright, predominantly red tones, no faces detected.",
+      "face_count": 0,
+      "tags": {},
+      "faces": []
+    }
+  ],
+  "persons": {}
+}

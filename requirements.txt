@@ -13,3 +13,12 @@ transformers
 torch
 sentencepiece
 pytest
+psycopg[binary]==3.2.10
+python-dotenv==1.1.1
+faster-whisper
+opencv-python
+scikit-learn
+torch
+transformers
+qdrant-client
+sentence-transformers==3.0.1
