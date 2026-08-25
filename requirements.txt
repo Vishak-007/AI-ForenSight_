@@ -3,16 +3,6 @@ Pillow==12.2.0
 pypdf==6.16.1
 pytesseract==0.3.13
 pymupdf==1.28.2
-
-# Tanglish -> English translation pipeline (translate.py / translation/)
-wordfreq
-symspellpy
-spacy
-indic_transliteration
-transformers
-torch
-sentencepiece
-pytest
 psycopg[binary]==3.2.10
 python-dotenv==1.1.1
 faster-whisper
@@ -23,5 +13,17 @@ transformers
 fastapi
 uvicorn
 python-multipart
+# Forensic Video Analysis pipeline (process_video.py)
+ultralytics
+easyocr
+imageio-ffmpeg
 qdrant-client
 sentence-transformers==3.0.1
+
+# Tanglish -> English translation pipeline (translate.py / translation/)
+wordfreq
+symspellpy
+spacy
+indic_transliteration
+sentencepiece
+pytest

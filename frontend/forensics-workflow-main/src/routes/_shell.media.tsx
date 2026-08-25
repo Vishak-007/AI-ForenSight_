@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ImageIcon, AudioLines, ImageOff, FolderGit2, Loader2, AlertTriangle, FileText, Layers, ScanFace } from "lucide-react";
+import { ImageIcon, AudioLines, ImageOff, FolderGit2, Loader2, AlertTriangle, FileText, Layers } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Panel, RecordId, SectionLabel } from "@/components/forensics/primitives";
 import { TimelineItem } from "@/components/forensics/TimelineItem";
@@ -14,7 +14,6 @@ import {
   getTranscriptions,
   getImageAnalysis,
   getImageTags,
-  getMediaFileUrl,
   formatFileSize,
   type MediaRecord,
   type OcrResultRecord,
@@ -46,7 +45,6 @@ function MediaPage() {
   const report = useReport();
   const [tab, setTab] = useState<Tab>("image");
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [facesOnly, setFacesOnly] = useState(false);
 
   const [mediaList, setMediaList] = useState<MediaRecord[]>([]);
   const [ocrList, setOcrList] = useState<OcrResultRecord[]>([]);
@@ -114,7 +112,7 @@ function MediaPage() {
         timestamp: m.timestamp,
         headline: headline,
         detail: detail,
-        media_uri: getMediaFileUrl(m.id),
+        media_uri: null, // safe placeholder until media serving API is built
         ocr_text: ocr ? ocr.text : null,
         transcript: tr ? tr.text : null,
         caption: ia ? (ia.context || (ia.width && ia.height ? `${ia.width}x${ia.height} ${ia.format || ""}` : null)) : null,
@@ -124,24 +122,10 @@ function MediaPage() {
     });
   }, [mediaList, ocrList, transcriptionList, analysisList, tagList]);
 
-  const faceMediaIds = useMemo(() => {
-    const ids = new Set<string>();
-    mediaList.forEach((m) => {
-      const ia = analysisList.find((a) => a.media_id === m.id);
-      if (ia && (ia.face_count ?? 0) > 0) {
-        ids.add(m.media_id || `MED-${m.id}`);
-      }
-    });
-    return ids;
-  }, [mediaList, analysisList]);
-
   const items = useMemo(() => {
-    const byTab = tab === "all" ? realMediaRecords : realMediaRecords.filter((r) => text(r.kind).toLowerCase() === tab);
-    if (facesOnly && (tab === "image" || tab === "all")) {
-      return byTab.filter((r) => faceMediaIds.has(r.id));
-    }
-    return byTab;
-  }, [realMediaRecords, tab, facesOnly, faceMediaIds]);
+    if (tab === "all") return realMediaRecords;
+    return realMediaRecords.filter((r) => text(r.kind).toLowerCase() === tab);
+  }, [realMediaRecords, tab]);
 
   const selected = items.find((r) => r.id === selectedId) ?? items[0];
 
@@ -210,25 +194,6 @@ function MediaPage() {
           </button>
         ))}
       </div>
-
-      {(tab === "image" || tab === "all") && (
-        <div className="mb-4">
-          <button
-            type="button"
-            onClick={() => setFacesOnly((v) => !v)}
-            aria-pressed={facesOnly}
-            className={cn(
-              "focus-ring inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors",
-              facesOnly
-                ? "border-brand-deep bg-brand-deep text-primary-foreground"
-                : "border-border bg-card text-muted-foreground hover:border-brand-accent hover:bg-ai hover:text-brand-dark",
-            )}
-          >
-            <ScanFace className="h-3.5 w-3.5" aria-hidden />
-            Faces only
-          </button>
-        </div>
-      )}
 
       {!loading && !error && items.length === 0 ? (
         <Panel>

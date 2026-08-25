@@ -135,8 +135,8 @@ function UploadPage() {
                 <div className="p-4 text-sm text-muted-foreground">
                   Analysis has not started. Click{" "}
                   <span className="font-semibold text-foreground">Start Forensic Analysis</span> to
-                  run parsing, message and call extraction, Whisper transcription, CLIP evidence
-                  tagging, Tesseract OCR, entity and flag analysis, correlation and report
+                  run parsing, message and call extraction, Whisper transcription, YOLO object
+                  detection, Tesseract OCR, entity and flag analysis, correlation and report
                   assembly.
                 </div>
               </Panel>

@@ -1,3 +1,20 @@
+"""
+UFDR parser prototype.
+
+Input:  a UFDR-style XML export (report.xml) + its media/ folder.
+Output: a single normalized JSON file containing every record type,
+        with media records enriched by type-specific metadata and a
+        SHA-256 hash (so tampering can be detected later — this is the
+        "evidentiary integrity" hook, cheap to add now, expensive to
+        bolt on later).
+
+Supported media types right now: image, audio, document.
+Video is intentionally NOT handled yet — see the `video` branch below,
+which just records that it was seen and skipped. Wiring it up later is
+the same pattern as audio, just with a video-specific metadata reader
+(e.g. moviepy or ffprobe) instead of `wave`.
+"""
+
 import argparse
 import xmltodict
 import json
@@ -65,6 +82,31 @@ def read_document_metadata(path):
     return {"ext": ext}
 
 
+def read_video_metadata(path):
+    """Extract technical and playback metadata for video evidence."""
+    try:
+        import cv2
+        cap = cv2.VideoCapture(path)
+        if not cap.isOpened():
+            return {"ext": os.path.splitext(path)[1].lower().lstrip(".")}
+        fps = cap.get(cv2.CAP_PROP_FPS) or 25.0
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        duration = round(total_frames / fps, 2) if fps > 0 else 0.0
+        cap.release()
+        return {
+            "width": width,
+            "height": height,
+            "fps": round(fps, 2),
+            "duration_seconds": duration,
+            "total_frames": total_frames,
+            "ext": os.path.splitext(path)[1].lower().lstrip("."),
+        }
+    except Exception:
+        return {"ext": os.path.splitext(path)[1].lower().lstrip(".")}
+
+
 def as_list(x):
     """xmltodict returns a dict for a single child and a list for multiple
     children with the same tag — this normalizes both cases to a list."""
@@ -101,8 +143,8 @@ def parse_media_item(item):
         record["metadata"] = read_document_metadata(file_path)
         record["status"] = "PARSED"
     elif item["type"] == "video":
-        # Not implemented yet — deliberately skipped for today's scope.
-        record["status"] = "SKIPPED_VIDEO_NOT_IMPLEMENTED"
+        record["metadata"] = read_video_metadata(file_path)
+        record["status"] = "PARSED"
     else:
         record["status"] = f"UNKNOWN_TYPE:{item['type']}"
 

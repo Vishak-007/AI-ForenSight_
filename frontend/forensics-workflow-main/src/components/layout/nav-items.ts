@@ -6,11 +6,12 @@ import {
   Users,
   ShieldAlert,
   Images,
+  History as HistoryIcon,
   Settings as SettingsIcon,
 } from "lucide-react";
 
 export interface NavItem {
-  to: "/upload" | "/report" | "/dashboard" | "/timeline" | "/entities" | "/flags" | "/media" | "/settings";
+  to: "/upload" | "/report" | "/dashboard" | "/timeline" | "/entities" | "/flags" | "/media" | "/history" | "/settings";
   label: string;
   icon: typeof LayoutDashboard;
   description: string;
@@ -38,6 +39,12 @@ export const NAV_ITEMS: NavItem[] = [
   { to: "/entities", label: "Entities", icon: Users, description: "People, phones and locations" },
   { to: "/flags", label: "Flags", icon: ShieldAlert, description: "AI-derived analysis flags" },
   { to: "/media", label: "Media", icon: Images, description: "Images and audio evidence" },
+  {
+    to: "/history",
+    label: "Audit Trail",
+    icon: HistoryIcon,
+    description: "Cryptographic chain-of-custody and access history",
+  },
   {
     to: "/report",
     label: "Final Report",

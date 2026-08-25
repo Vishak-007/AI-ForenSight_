@@ -15,6 +15,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ShellDashboardRouteImport } from './routes/_shell.dashboard'
 import { Route as ShellEntitiesRouteImport } from './routes/_shell.entities'
 import { Route as ShellFlagsRouteImport } from './routes/_shell.flags'
+import { Route as ShellHistoryRouteImport } from './routes/_shell.history'
 import { Route as ShellMediaRouteImport } from './routes/_shell.media'
 import { Route as ShellReportRouteImport } from './routes/_shell.report'
 import { Route as ShellSettingsRouteImport } from './routes/_shell.settings'
@@ -50,6 +51,11 @@ const ShellFlagsRoute = ShellFlagsRouteImport.update({
   path: '/flags',
   getParentRoute: () => ShellRoute,
 } as any)
+const ShellHistoryRoute = ShellHistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => ShellRoute,
+} as any)
 const ShellMediaRoute = ShellMediaRouteImport.update({
   id: '/media',
   path: '/media',
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof ShellDashboardRoute
   '/entities': typeof ShellEntitiesRoute
   '/flags': typeof ShellFlagsRoute
+  '/history': typeof ShellHistoryRoute
   '/media': typeof ShellMediaRoute
   '/report': typeof ShellReportRoute
   '/settings': typeof ShellSettingsRoute
@@ -94,6 +101,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof ShellDashboardRoute
   '/entities': typeof ShellEntitiesRoute
   '/flags': typeof ShellFlagsRoute
+  '/history': typeof ShellHistoryRoute
   '/media': typeof ShellMediaRoute
   '/report': typeof ShellReportRoute
   '/settings': typeof ShellSettingsRoute
@@ -108,6 +116,7 @@ export interface FileRoutesById {
   '/_shell/dashboard': typeof ShellDashboardRoute
   '/_shell/entities': typeof ShellEntitiesRoute
   '/_shell/flags': typeof ShellFlagsRoute
+  '/_shell/history': typeof ShellHistoryRoute
   '/_shell/media': typeof ShellMediaRoute
   '/_shell/report': typeof ShellReportRoute
   '/_shell/settings': typeof ShellSettingsRoute
@@ -122,6 +131,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/entities'
     | '/flags'
+    | '/history'
     | '/media'
     | '/report'
     | '/settings'
@@ -134,6 +144,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/entities'
     | '/flags'
+    | '/history'
     | '/media'
     | '/report'
     | '/settings'
@@ -147,6 +158,7 @@ export interface FileRouteTypes {
     | '/_shell/dashboard'
     | '/_shell/entities'
     | '/_shell/flags'
+    | '/_shell/history'
     | '/_shell/media'
     | '/_shell/report'
     | '/_shell/settings'
@@ -204,6 +216,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShellFlagsRouteImport
       parentRoute: typeof ShellRoute
     }
+    '/_shell/history': {
+      id: '/_shell/history'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof ShellHistoryRouteImport
+      parentRoute: typeof ShellRoute
+    }
     '/_shell/media': {
       id: '/_shell/media'
       path: '/media'
@@ -246,6 +265,7 @@ interface ShellRouteChildren {
   ShellDashboardRoute: typeof ShellDashboardRoute
   ShellEntitiesRoute: typeof ShellEntitiesRoute
   ShellFlagsRoute: typeof ShellFlagsRoute
+  ShellHistoryRoute: typeof ShellHistoryRoute
   ShellMediaRoute: typeof ShellMediaRoute
   ShellReportRoute: typeof ShellReportRoute
   ShellSettingsRoute: typeof ShellSettingsRoute
@@ -257,6 +277,7 @@ const ShellRouteChildren: ShellRouteChildren = {
   ShellDashboardRoute: ShellDashboardRoute,
   ShellEntitiesRoute: ShellEntitiesRoute,
   ShellFlagsRoute: ShellFlagsRoute,
+  ShellHistoryRoute: ShellHistoryRoute,
   ShellMediaRoute: ShellMediaRoute,
   ShellReportRoute: ShellReportRoute,
   ShellSettingsRoute: ShellSettingsRoute,

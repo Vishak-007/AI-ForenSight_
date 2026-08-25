@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MessageSquare, PhoneCall, AudioLines, ImageIcon, FileText, Clock, ImageOff } from "lucide-react";
+import { MessageSquare, PhoneCall, AudioLines, ImageIcon, Clock, ImageOff } from "lucide-react";
 import type { DetectedObject, TimelineRecord } from "@/lib/report-types";
 import { confidencePercent, formatTimestamp, list, text } from "@/lib/report-types";
 import { KindBadge, RecordId } from "./primitives";
@@ -11,7 +11,6 @@ const KIND_META: Record<string, { icon: typeof MessageSquare; label: string }> =
   call: { icon: PhoneCall, label: "Call" },
   audio: { icon: AudioLines, label: "Audio" },
   image: { icon: ImageIcon, label: "Image" },
-  document: { icon: FileText, label: "Document" },
 };
 
 function Shell({ record, children }: { record: TimelineRecord; children?: React.ReactNode }) {
@@ -132,25 +131,6 @@ function ImageBody({ record }: { record: TimelineRecord }) {
   );
 }
 
-function DocumentBody({ record }: { record: TimelineRecord }) {
-  const ocr = text(record.ocr_text);
-
-  return (
-    <>
-      {ocr ? (
-        <EvidenceBlock label="Extracted Text (OCR)">
-          <span className="font-mono whitespace-pre-wrap break-words">{ocr}</span>
-        </EvidenceBlock>
-      ) : (
-        <p className="mt-3 rounded-lg border border-dashed border-border px-3 py-2 text-xs text-muted-foreground">
-          No OCR text extracted for this document.
-        </p>
-      )}
-      <AiCaption caption={record.caption} status={record.caption_status} />
-    </>
-  );
-}
-
 export function TimelineItem({ record }: { record: TimelineRecord }) {
   const kind = text(record.kind).toLowerCase();
 
@@ -165,13 +145,6 @@ export function TimelineItem({ record }: { record: TimelineRecord }) {
     return (
       <Shell record={record}>
         <ImageBody record={record} />
-      </Shell>
-    );
-  }
-  if (kind === "document") {
-    return (
-      <Shell record={record}>
-        <DocumentBody record={record} />
       </Shell>
     );
   }

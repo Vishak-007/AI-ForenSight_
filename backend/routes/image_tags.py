@@ -6,7 +6,7 @@ Supports filtering by case_id via JOIN with media.
 """
 
 from typing import Optional
-from fastapi import APIRouter, HTTPException, Query, status
+from fastapi import APIRouter, HTTPException, Query, Request, status
 from psycopg.rows import dict_row
 
 try:
@@ -14,13 +14,21 @@ try:
 except ImportError:
     from database.connection import get_connection
 
+try:
+    from ..database.audit import log_audit_event
+except ImportError:
+    from database.audit import log_audit_event
+
 
 router = APIRouter(prefix="/api/image-tags", tags=["image-tags"])
 
 
 @router.get("", status_code=status.HTTP_200_OK)
 @router.get("/", status_code=status.HTTP_200_OK)
-def get_image_tags(case_id: Optional[int] = Query(None, description="Optional case ID to filter image tags")):
+def get_image_tags(
+    request: Request,
+    case_id: Optional[int] = Query(None, description="Optional case ID to filter image tags"),
+):
     """
     Retrieve image evidentiary tag records from the PostgreSQL database.
     Optionally filter by case_id via JOIN with media table.
@@ -40,6 +48,15 @@ def get_image_tags(case_id: Optional[int] = Query(None, description="Optional ca
                         "SELECT id, media_id, tag, confidence FROM image_tags ORDER BY id ASC;"
                     )
                 tags = cursor.fetchall()
+                
+                log_audit_event(
+                    case_id=case_id,
+                    action="IMAGE_TAGS_VIEWED",
+                    resource_type="image_tag",
+                    details={"tags_returned": len(tags)},
+                    ip_address=request.client.host if request.client else None,
+                    user_agent=request.headers.get("user-agent"),
+                )
                 return tags
     except Exception:
         raise HTTPException(

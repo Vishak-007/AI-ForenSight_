@@ -16,19 +16,8 @@ export function useReport(): NormalizedReport {
 export const matchesQuery = (record: TimelineRecord, query: string): boolean => {
   const q = query.trim().toLowerCase();
   if (!q) return true;
-  const objectLabels = list(record.detected_objects)
-    .map((o) => text(o.label))
-    .join(" ");
-  return [
-    record.id,
-    record.headline,
-    record.detail,
-    record.transcript,
-    record.ocr_text,
-    record.caption,
-    objectLabels,
-  ]
-    .map((field) => (typeof field === "string" ? field : "").toLowerCase())
+  return [record.id, record.headline, record.detail, record.transcript, record.ocr_text]
+    .map((field) => text(field).toLowerCase())
     .join(" \u0000 ")
     .includes(q);
 };

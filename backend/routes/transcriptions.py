@@ -6,7 +6,7 @@ Supports filtering by case_id via JOIN with media.
 """
 
 from typing import Optional
-from fastapi import APIRouter, HTTPException, Query, status
+from fastapi import APIRouter, HTTPException, Query, Request, status
 from psycopg.rows import dict_row
 
 try:
@@ -14,13 +14,21 @@ try:
 except ImportError:
     from database.connection import get_connection
 
+try:
+    from ..database.audit import log_audit_event
+except ImportError:
+    from database.audit import log_audit_event
+
 
 router = APIRouter(prefix="/api/transcriptions", tags=["transcriptions"])
 
 
 @router.get("", status_code=status.HTTP_200_OK)
 @router.get("/", status_code=status.HTTP_200_OK)
-def get_transcriptions(case_id: Optional[int] = Query(None, description="Optional case ID to filter transcriptions")):
+def get_transcriptions(
+    request: Request,
+    case_id: Optional[int] = Query(None, description="Optional case ID to filter transcriptions"),
+):
     """
     Retrieve audio transcription records from the PostgreSQL database.
     Optionally filter by case_id via JOIN with media table.
@@ -40,6 +48,15 @@ def get_transcriptions(case_id: Optional[int] = Query(None, description="Optiona
                         "SELECT id, media_id, text, language FROM transcriptions ORDER BY id ASC;"
                     )
                 transcription_records = cursor.fetchall()
+                
+                log_audit_event(
+                    case_id=case_id,
+                    action="TRANSCRIPTIONS_VIEWED",
+                    resource_type="transcription",
+                    details={"transcriptions_returned": len(transcription_records)},
+                    ip_address=request.client.host if request.client else None,
+                    user_agent=request.headers.get("user-agent"),
+                )
                 return transcription_records
     except Exception:
         raise HTTPException(

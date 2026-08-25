@@ -6,7 +6,7 @@ Supports filtering by case_id.
 """
 
 from typing import Optional
-from fastapi import APIRouter, HTTPException, Query, status
+from fastapi import APIRouter, HTTPException, Query, Request, status
 from psycopg.rows import dict_row
 
 try:
@@ -14,13 +14,21 @@ try:
 except ImportError:
     from database.connection import get_connection
 
+try:
+    from ..database.audit import log_audit_event
+except ImportError:
+    from database.audit import log_audit_event
+
 
 router = APIRouter(prefix="/api/messages", tags=["messages"])
 
 
 @router.get("", status_code=status.HTTP_200_OK)
 @router.get("/", status_code=status.HTTP_200_OK)
-def get_messages(case_id: Optional[int] = Query(None, description="Optional case ID to filter messages")):
+def get_messages(
+    request: Request,
+    case_id: Optional[int] = Query(None, description="Optional case ID to filter messages"),
+):
     """
     Retrieve message records from the PostgreSQL database.
     Optionally filter by case_id.
@@ -40,6 +48,15 @@ def get_messages(case_id: Optional[int] = Query(None, description="Optional case
                         "FROM messages ORDER BY id ASC;"
                     )
                 messages = cursor.fetchall()
+                
+                log_audit_event(
+                    case_id=case_id,
+                    action="MESSAGES_VIEWED",
+                    resource_type="message",
+                    details={"messages_returned": len(messages)},
+                    ip_address=request.client.host if request.client else None,
+                    user_agent=request.headers.get("user-agent"),
+                )
                 return messages
     except Exception:
         raise HTTPException(

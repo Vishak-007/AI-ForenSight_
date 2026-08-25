@@ -73,6 +73,11 @@ try:
 except ImportError:
     from routes.upload import router as upload_router
 
+try:
+    from .routes.audit_logs import router as audit_logs_router
+except ImportError:
+    from routes.audit_logs import router as audit_logs_router
+
 
 app = FastAPI(
     title="AI-ForenSight Forensic API",
@@ -111,6 +116,7 @@ app.include_router(transcriptions_router)
 app.include_router(image_analysis_router)
 app.include_router(image_tags_router)
 app.include_router(upload_router)
+app.include_router(audit_logs_router)
 
 
 @app.get("/api/health")

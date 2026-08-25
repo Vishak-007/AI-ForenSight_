@@ -6,7 +6,7 @@ Supports filtering by case_id.
 """
 
 from typing import Optional
-from fastapi import APIRouter, HTTPException, Query, status
+from fastapi import APIRouter, HTTPException, Query, Request, status
 from psycopg.rows import dict_row
 
 try:
@@ -14,13 +14,21 @@ try:
 except ImportError:
     from database.connection import get_connection
 
+try:
+    from ..database.audit import log_audit_event
+except ImportError:
+    from database.audit import log_audit_event
+
 
 router = APIRouter(prefix="/api/devices", tags=["devices"])
 
 
 @router.get("", status_code=status.HTTP_200_OK)
 @router.get("/", status_code=status.HTTP_200_OK)
-def get_devices(case_id: Optional[int] = Query(None, description="Optional case ID to filter devices")):
+def get_devices(
+    request: Request,
+    case_id: Optional[int] = Query(None, description="Optional case ID to filter devices"),
+):
     """
     Retrieve device records from the PostgreSQL database.
     Optionally filter by case_id.
@@ -40,6 +48,15 @@ def get_devices(case_id: Optional[int] = Query(None, description="Optional case 
                         "FROM devices ORDER BY id ASC;"
                     )
                 devices = cursor.fetchall()
+                
+                log_audit_event(
+                    case_id=case_id,
+                    action="DEVICES_VIEWED",
+                    resource_type="device",
+                    details={"devices_returned": len(devices)},
+                    ip_address=request.client.host if request.client else None,
+                    user_agent=request.headers.get("user-agent"),
+                )
                 return devices
     except Exception:
         raise HTTPException(

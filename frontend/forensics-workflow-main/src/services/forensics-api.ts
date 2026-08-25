@@ -10,7 +10,6 @@
  */
 
 import type { Entity, Flag, ReportData, TimelineRecord } from "@/lib/report-types";
-import { buildContactPhoneMap, describeMediaOrigin, indexByKey } from "@/lib/media-origin";
 
 /* ------------------------------- contracts ------------------------------- */
 
@@ -110,8 +109,6 @@ export interface OcrResultRecord {
   id: number;
   media_id: number;
   text: string;
-  /** English translation of `text` (from translate.py), null if not translated. */
-  translated_text: string | null;
 }
 
 export interface TranscriptionRecord {
@@ -141,10 +138,6 @@ export interface ImageTagRecord {
 
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
-
-export function getMediaFileUrl(mediaId: number): string {
-  return `${API_BASE_URL}/api/media/${mediaId}/file`;
-}
 
 export async function getCases(): Promise<CaseRecord[]> {
   try {
@@ -559,50 +552,12 @@ export async function getReportData(caseId: string | number): Promise<ReportData
 
     const summary = `Digital Forensics Report for ${caseName} (Case #${targetId}). System processed ${devices.length} device(s), ${contacts.length} contact(s), ${messages.length} message(s), ${calls.length} call(s), ${media.length} media item(s), ${ocrResults.length} OCR result(s), ${transcriptions.length} transcript(s), ${imageAnalysis.length} image analysis record(s), and ${imageTags.length} object tag(s).`;
 
-    const entities: Entity[] = contacts.map((c) => {
-      // Collect all identifiers for this contact to match against evidence fields
-      const identifiers = [c.contact_id, c.name, c.phone]
-        .filter((v): v is string => typeof v === "string" && v.trim().length > 0)
-        .map((v) => v.toLowerCase());
-
-      const linkedIds: string[] = [];
-
-      // Messages where this contact is sender or receiver
-      for (const m of messages) {
-        const sender = (m.sender || "").toLowerCase();
-        const receiver = (m.receiver || "").toLowerCase();
-        if (identifiers.some((id) => sender.includes(id) || receiver.includes(id))) {
-          linkedIds.push(m.message_id || `MSG-${m.id}`);
-        }
-      }
-
-      // Calls where this contact is caller or callee
-      for (const call of calls) {
-        const caller = (call.caller || "").toLowerCase();
-        const callee = (call.callee || "").toLowerCase();
-        if (identifiers.some((id) => caller.includes(id) || callee.includes(id))) {
-          linkedIds.push(call.call_id || `CALL-${call.id}`);
-        }
-      }
-
-      // Media associated with messages linked to this contact
-      for (const m of media) {
-        if (m.associated_message_id) {
-          const msgId = m.message_id || `MED-${m.id}`;
-          // Check if this media's associated message is already linked
-          if (linkedIds.includes(m.associated_message_id)) {
-            linkedIds.push(msgId);
-          }
-        }
-      }
-
-      return {
-        name: c.name || c.contact_id,
-        type: "Contact",
-        known_contact: c.phone || "No phone listed",
-        record_ids: linkedIds.length > 0 ? linkedIds : [c.contact_id],
-      };
-    });
+    const entities: Entity[] = contacts.map((c) => ({
+      name: c.name || c.contact_id,
+      type: "Contact Record",
+      known_contact: c.phone || "No phone listed",
+      record_ids: [c.contact_id],
+    }));
 
     const flags: Flag[] = [];
     if (ocrResults.length > 0) {
@@ -650,10 +605,6 @@ export async function getReportData(caseId: string | number): Promise<ReportData
       detail: `Duration: ${c.duration_seconds != null ? `${c.duration_seconds}s` : "Unknown"} · Type: ${c.type || "unknown"}`,
     }));
 
-    const contactByPhone = buildContactPhoneMap(contacts);
-    const messagesById = indexByKey(messages, (m) => m.message_id);
-    const callsById = indexByKey(calls, (c) => c.call_id);
-
     const mediaEvents: TimelineRecord[] = media.map((m) => {
       const ocr = ocrResults.find((o) => o.media_id === m.id);
       const tr = transcriptions.find((t) => t.media_id === m.id);
@@ -670,8 +621,8 @@ export async function getReportData(caseId: string | number): Promise<ReportData
         headline: m.filename,
         detail: `${formatFileSize(m.file_size_bytes || 0)} · Status: ${m.status || "PARSED"}${
           m.sha256 ? ` · SHA256: ${m.sha256.slice(0, 16)}...` : ""
-        } · ${describeMediaOrigin(m, messagesById, callsById, contactByPhone)}`,
-        media_uri: getMediaFileUrl(m.id),
+        }`,
+        media_uri: null,
         ocr_text: ocr ? ocr.text : null,
         transcript: tr ? tr.text : null,
         caption: ia ? (ia.context || (ia.width && ia.height ? `${ia.width}x${ia.height} ${ia.format || ""}` : null)) : null,
@@ -693,6 +644,86 @@ export async function getReportData(caseId: string | number): Promise<ReportData
   } catch (error) {
     if (error instanceof ForensicsApiError) throw error;
     throw new ForensicsApiError("Failed to fetch real report data from database.");
+  }
+}
+
+/* --------------------------- Audit Logs Services --------------------------- */
+
+export interface AuditLogRecord {
+  id: number;
+  case_id: number | null;
+  user_id: string;
+  action: string;
+  resource_type: string | null;
+  resource_id: string | null;
+  details: Record<string, any> | string | null;
+  ip_address: string | null;
+  user_agent: string | null;
+  timestamp: string;
+  prev_log_hash: string;
+  entry_hash: string;
+}
+
+export interface AuditVerificationResult {
+  status: "verified" | "corrupted" | "valid";
+  total_entries: number;
+  message: string;
+  corrupted_at_id?: number;
+  reason?: string;
+  expected_prev_hash?: string;
+  found_prev_hash?: string;
+}
+
+export async function getAuditLogs(params?: {
+  caseId?: number | null;
+  userId?: string;
+  action?: string;
+  limit?: number;
+  offset?: number;
+}): Promise<{ total: number; logs: AuditLogRecord[] }> {
+  try {
+    const url = new URL(`${API_BASE_URL}/api/audit-logs`);
+    if (params?.caseId != null) url.searchParams.append("case_id", String(params.caseId));
+    if (params?.userId) url.searchParams.append("user_id", params.userId);
+    if (params?.action) url.searchParams.append("action", params.action);
+    if (params?.limit !== undefined) url.searchParams.append("limit", String(params.limit));
+    if (params?.offset !== undefined) url.searchParams.append("offset", String(params.offset));
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: { Accept: "application/json" },
+    });
+
+    if (!response.ok) {
+      throw new ForensicsApiError("Failed to fetch audit log history from server.");
+    }
+
+    const data = await response.json();
+    return {
+      total: data.total || 0,
+      logs: Array.isArray(data.logs) ? data.logs : [],
+    };
+  } catch (error) {
+    if (error instanceof ForensicsApiError) throw error;
+    throw new ForensicsApiError("Unable to connect to audit logs endpoint.");
+  }
+}
+
+export async function verifyAuditTrail(): Promise<AuditVerificationResult> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/audit-logs/verify`, {
+      method: "GET",
+      headers: { Accept: "application/json" },
+    });
+
+    if (!response.ok) {
+      throw new ForensicsApiError("Audit trail cryptographic verification request failed.");
+    }
+
+    return await response.json();
+  } catch (error) {
+    if (error instanceof ForensicsApiError) throw error;
+    throw new ForensicsApiError("Unable to reach audit verification service.");
   }
 }
 

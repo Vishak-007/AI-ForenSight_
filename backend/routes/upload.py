@@ -11,14 +11,18 @@ import re
 import shutil
 import subprocess
 import sys
-import threading
 import uuid
 import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict
 
-from fastapi import APIRouter, BackgroundTasks, File, Form, HTTPException, UploadFile, status
+from fastapi import APIRouter, BackgroundTasks, File, Form, HTTPException, Request, UploadFile, status
+
+try:
+    from ..database.audit import log_audit_event
+except ImportError:
+    from database.audit import log_audit_event
 
 
 BACKEND_DIR = Path(__file__).resolve().parents[1]
@@ -30,13 +34,6 @@ router = APIRouter(prefix="/api/cases/upload", tags=["upload"])
 
 # In-memory status store for tracking background extraction jobs
 JOBS: Dict[str, Dict[str, Any]] = {}
-
-# run_pipeline.py's extraction stages write to fixed filenames inside backend/
-# (parsed_output.json, translated_output.json, ...) and load multi-GB models
-# (NLLB, CLIP, Whisper) into memory. Two pipelines running at once would both
-# clobber each other's intermediate files and fight over RAM/CPU, so only one
-# is allowed to actually run at a time -- later uploads queue behind it.
-PIPELINE_LOCK = threading.Lock()
 
 
 def sanitize_filename(name: str) -> str:
@@ -55,48 +52,61 @@ def is_safe_extract_path(target_folder: Path, dest_path: Path) -> bool:
 
 
 def run_pipeline_background(job_id: str, case_name: str, report_xml_path: Path):
-    """Execute the extraction pipeline in a background subprocess.
+    """Execute the extraction pipeline in a background subprocess."""
+    try:
+        cmd = [
+            sys.executable,
+            str(BACKEND_DIR / "run_pipeline.py"),
+            "--case-name", case_name,
+            "--source-file", str(report_xml_path),
+        ]
 
-    Blocks on PIPELINE_LOCK first so only one pipeline subprocess runs at a
-    time -- see the lock's definition for why concurrent runs aren't safe.
-    """
-    JOBS[job_id]["status"] = "queued"
-    with PIPELINE_LOCK:
-        JOBS[job_id]["status"] = "processing"
-        JOBS[job_id]["started_at"] = datetime.now(timezone.utc).isoformat()
-        try:
-            cmd = [
-                sys.executable,
-                str(BACKEND_DIR / "run_pipeline.py"),
-                "--case-name", case_name,
-                "--source-file", str(report_xml_path),
-            ]
+        result = subprocess.run(
+            cmd,
+            cwd=PROJECT_ROOT,
+            capture_output=True,
+            text=True,
+        )
 
-            result = subprocess.run(
-                cmd,
-                cwd=PROJECT_ROOT,
-                capture_output=True,
-                text=True,
-            )
-
-            if result.returncode == 0:
-                case_id_match = re.search(r"^CASE_ID=(\d+)$", result.stdout or "", re.MULTILINE)
-                JOBS[job_id]["case_id"] = int(case_id_match.group(1)) if case_id_match else None
-                JOBS[job_id]["status"] = "completed"
-                JOBS[job_id]["completed_at"] = datetime.now(timezone.utc).isoformat()
-            else:
-                JOBS[job_id]["status"] = "failed"
-                JOBS[job_id]["error_message"] = "UFDR extraction pipeline execution failed."
-                JOBS[job_id]["completed_at"] = datetime.now(timezone.utc).isoformat()
-        except Exception:
-            JOBS[job_id]["status"] = "failed"
-            JOBS[job_id]["error_message"] = "An error occurred while launching background pipeline."
+        if result.returncode == 0:
+            case_id_match = re.search(r"^CASE_ID=(\d+)$", result.stdout or "", re.MULTILINE)
+            extracted_case_id = int(case_id_match.group(1)) if case_id_match else None
+            JOBS[job_id]["case_id"] = extracted_case_id
+            JOBS[job_id]["status"] = "completed"
             JOBS[job_id]["completed_at"] = datetime.now(timezone.utc).isoformat()
+            
+            # Log successful forensic ingestion
+            log_audit_event(
+                case_id=extracted_case_id,
+                action="PIPELINE_EXTRACTION_SUCCESS",
+                resource_type="case",
+                resource_id=str(extracted_case_id) if extracted_case_id else None,
+                details={"job_id": job_id, "case_name": case_name},
+            )
+        else:
+            JOBS[job_id]["status"] = "failed"
+            JOBS[job_id]["error_message"] = "UFDR extraction pipeline execution failed."
+            JOBS[job_id]["completed_at"] = datetime.now(timezone.utc).isoformat()
+            log_audit_event(
+                action="PIPELINE_EXTRACTION_FAILED",
+                resource_type="case",
+                details={"job_id": job_id, "case_name": case_name, "error": "Process returned non-zero exit code"},
+            )
+    except Exception as exc:
+        JOBS[job_id]["status"] = "failed"
+        JOBS[job_id]["error_message"] = "An error occurred while launching background pipeline."
+        JOBS[job_id]["completed_at"] = datetime.now(timezone.utc).isoformat()
+        log_audit_event(
+            action="PIPELINE_EXTRACTION_ERROR",
+            resource_type="case",
+            details={"job_id": job_id, "case_name": case_name, "error": str(exc)},
+        )
 
 
 @router.post("", status_code=status.HTTP_202_ACCEPTED)
 @router.post("/", status_code=status.HTTP_202_ACCEPTED)
 async def upload_ufdr_case(
+    request: Request,
     background_tasks: BackgroundTasks,
     case_name: str = Form(..., description="Name for the forensic case"),
     file: UploadFile = File(..., description="ZIP archive containing UFDR package"),
@@ -169,13 +179,11 @@ async def upload_ufdr_case(
                 detail="Invalid UFDR package: report.xml not found in archive.",
             )
 
-    # Register job state. Status starts "queued" -- run_pipeline_background
-    # flips it to "processing" once it actually acquires PIPELINE_LOCK, which
-    # may not be immediate if another case's pipeline is still running.
+    # Register job state
     JOBS[job_id] = {
         "job_id": job_id,
         "case_name": case_name.strip(),
-        "status": "queued",
+        "status": "processing",
         "error_message": None,
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
@@ -188,11 +196,19 @@ async def upload_ufdr_case(
         report_xml_path,
     )
 
+    log_audit_event(
+        action="CASE_UPLOAD_INITIATED",
+        resource_type="case",
+        details={"job_id": job_id, "case_name": case_name.strip(), "archive_filename": file.filename},
+        ip_address=request.client.host if request.client else None,
+        user_agent=request.headers.get("user-agent"),
+    )
+
     return {
         "job_id": job_id,
         "case_name": case_name.strip(),
-        "status": "queued",
-        "message": "UFDR upload received and queued for processing",
+        "status": "processing",
+        "message": "UFDR upload received and processing started",
     }
 
 

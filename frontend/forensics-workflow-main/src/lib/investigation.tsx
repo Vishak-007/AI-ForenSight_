@@ -124,33 +124,6 @@ export function InvestigationProvider({ children }: { children: ReactNode }) {
     uploadRef.current = state.upload;
   }, [state.upload]);
 
-  /* Single source of truth for report data: whenever the active case
-   * changes -- on initial load, after an upload/analysis completes, or
-   * from a manual case switch -- (re)fetch that case's real data. Errors
-   * are recorded but not thrown, so useReport()'s mock fallback still
-   * renders something if the backend/DB isn't reachable yet. */
-  useEffect(() => {
-    const caseId = state.activeCaseId;
-    if (caseId == null) return;
-    let cancelled = false;
-    getReportData(caseId)
-      .then((report) => {
-        if (!cancelled) setState((s) => (s.activeCaseId === caseId ? { ...s, reportData: report } : s));
-      })
-      .catch((err) => {
-        if (!cancelled) {
-          setState((s) =>
-            s.activeCaseId === caseId
-              ? { ...s, error: message(err, `Could not load report data for case #${caseId}.`) }
-              : s,
-          );
-        }
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [state.activeCaseId]);
-
   const stopPolling = useCallback(() => {
     if (timer.current) clearInterval(timer.current);
     timer.current = null;
@@ -232,14 +205,25 @@ export function InvestigationProvider({ children }: { children: ReactNode }) {
               progress: 100,
               statusMessage: "Analysis complete.",
               completedAt: new Date().toISOString(),
-              // Setting activeCaseId here is enough -- the effect below
-              // reacts to it changing and loads this case's report data,
-              // the same path a manual case switch goes through.
               activeCaseId: status.caseId ?? s.activeCaseId,
-              error: status.caseId == null
-                ? "Analysis completed, but no case id was returned -- the report could not be loaded."
-                : s.error,
             }));
+
+            if (status.caseId != null) {
+              try {
+                const report = await getReportData(status.caseId);
+                setState((s) => ({ ...s, reportData: report }));
+              } catch (err) {
+                setState((s) => ({
+                  ...s,
+                  error: message(err, "Analysis completed, but the report data could not be loaded."),
+                }));
+              }
+            } else {
+              setState((s) => ({
+                ...s,
+                error: "Analysis completed, but no case id was returned -- the report could not be loaded.",
+              }));
+            }
           } else if (status.state === "failed") {
             stopPolling();
             setState((s) => ({

@@ -67,6 +67,11 @@ def parse_args():
         default="image_analysis_output.json",
         help="Output path for image analysis JSON (default: 'image_analysis_output.json')",
     )
+    parser.add_argument(
+        "--video-analysis-output",
+        default="video_analysis_output.json",
+        help="Output path for video analysis JSON (default: 'video_analysis_output.json')",
+    )
     return parser.parse_args()
 
 
@@ -120,6 +125,7 @@ def main():
     translated_path = Path(args.translated_output)
     transcripts_path = Path(args.transcripts_output)
     image_analysis_path = Path(args.image_analysis_output)
+    video_analysis_path = Path(args.video_analysis_output)
 
     py_exe = sys.executable
 
@@ -142,31 +148,26 @@ def main():
         expected_output=ocr_path,
     )
 
-    # 3. Tanglish -> English translation of OCR text -- best-effort: it
-    # depends on a large (~2.4GB) NLLB model download that may not be
-    # available in every environment, and the raw OCR text is already
-    # usable/searchable on its own without a translation.
+    # 3. Audio Transcription
     run_stage(
-        stage_name="3/7 Tanglish->English Translation (translate.py)",
-        cmd=[py_exe, str(PROJECT_ROOT / "translate.py")],
-        expected_output=translated_path,
-        cwd=PROJECT_ROOT,
-        fatal=False,
-    )
-    translated_output_exists = (BACKEND_DIR / translated_path).exists()
-
-    # 4. Audio Transcription
-    run_stage(
-        stage_name="4/7 Audio Transcription (transcribe.py)",
+        stage_name="3/7 Audio Transcription (transcribe.py)",
         cmd=[py_exe, "transcribe.py", "--input-dir", input_dir],
         expected_output=transcripts_path,
     )
 
-    # 5. Image Analysis & Tagging
+    # 4. Image Analysis & Tagging
     run_stage(
-        stage_name="5/7 Image Analysis (image_extractor.py)",
+        stage_name="4/7 Image Analysis (image_extractor.py)",
         cmd=[py_exe, "image_extractor.py", "--input-dir", input_dir],
         expected_output=image_analysis_path,
+    )
+
+    # 5. Video Analysis & Timeline
+    run_stage(
+        stage_name="5/7 Forensic Video Analysis (process_video.py)",
+        cmd=[py_exe, "process_video.py", "--input-dir", input_dir, "--output-file", str(video_analysis_path)],
+        expected_output=video_analysis_path,
+        fatal=False,
     )
 
     # 6. PostgreSQL Database Importer
@@ -182,8 +183,6 @@ def main():
         "--transcripts", str(BACKEND_DIR / transcripts_path),
         "--image-analysis", str(BACKEND_DIR / image_analysis_path),
     ]
-    if translated_output_exists:
-        import_cmd += ["--translated", str(BACKEND_DIR / translated_path)]
 
     import_output = run_stage(
         stage_name="6/7 PostgreSQL Database Import (import_data.py)",
@@ -199,16 +198,9 @@ def main():
     # 7. Qdrant semantic-search indexing -- best-effort: the case data is
     # already safely committed to Postgres by this point, so a failure here
     # (e.g. Qdrant not running) shouldn't be treated as a pipeline failure.
-    # Tagged with the Postgres case_id (not the UFDR's own device_id) so two
-    # different uploads that happen to share a device_id -- e.g. re-running
-    # the same sample file -- get separate search indexes instead of one
-    # silently overwriting the other's points.
-    vector_cmd = [py_exe, "-m", "backend.vector_db.index"]
-    if case_id:
-        vector_cmd += ["--case-id", f"case-{case_id}"]
     run_stage(
         stage_name="7/7 Semantic Search Indexing (vector_db.index)",
-        cmd=vector_cmd,
+        cmd=[py_exe, "-m", "backend.vector_db.index"],
         expected_output=None,
         cwd=PROJECT_ROOT,
         fatal=False,
@@ -222,7 +214,6 @@ def main():
     print(f"Input Dir:       {input_dir}")
     print(f"Parsed JSON:     {parsed_path}")
     print(f"OCR JSON:        {ocr_path}")
-    print(f"Translated JSON: {translated_path}{'' if translated_output_exists else ' (skipped)'}")
     print(f"Transcripts JSON:{transcripts_path}")
     print(f"Image JSON:      {image_analysis_path}")
     print("All outputs generated and imported into PostgreSQL database.")

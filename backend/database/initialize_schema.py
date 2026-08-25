@@ -77,14 +77,8 @@ CREATE TABLE IF NOT EXISTS media (
 CREATE TABLE IF NOT EXISTS ocr_results (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     media_id BIGINT NOT NULL REFERENCES media(id) ON DELETE CASCADE,
-    text TEXT NOT NULL,
-    translated_text TEXT
+    text TEXT NOT NULL
 );
-
--- Backfills the column on a database that already had ocr_results before
--- translate.py existed; a no-op on a fresh database (column is already
--- part of the CREATE TABLE above).
-ALTER TABLE ocr_results ADD COLUMN IF NOT EXISTS translated_text TEXT;
 
 CREATE TABLE IF NOT EXISTS transcriptions (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,

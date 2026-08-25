@@ -6,7 +6,7 @@ Supports filtering by case_id via JOIN with media.
 """
 
 from typing import Optional
-from fastapi import APIRouter, HTTPException, Query, status
+from fastapi import APIRouter, HTTPException, Query, Request, status
 from psycopg.rows import dict_row
 
 try:
@@ -14,13 +14,21 @@ try:
 except ImportError:
     from database.connection import get_connection
 
+try:
+    from ..database.audit import log_audit_event
+except ImportError:
+    from database.audit import log_audit_event
+
 
 router = APIRouter(prefix="/api/image-analysis", tags=["image-analysis"])
 
 
 @router.get("", status_code=status.HTTP_200_OK)
 @router.get("/", status_code=status.HTTP_200_OK)
-def get_image_analysis(case_id: Optional[int] = Query(None, description="Optional case ID to filter image analysis")):
+def get_image_analysis(
+    request: Request,
+    case_id: Optional[int] = Query(None, description="Optional case ID to filter image analysis"),
+):
     """
     Retrieve image analysis records from the PostgreSQL database.
     Optionally filter by case_id via JOIN with media table.
@@ -42,6 +50,15 @@ def get_image_analysis(case_id: Optional[int] = Query(None, description="Optiona
                         "FROM image_analysis ORDER BY id ASC;"
                     )
                 analyses = cursor.fetchall()
+                
+                log_audit_event(
+                    case_id=case_id,
+                    action="IMAGE_ANALYSIS_VIEWED",
+                    resource_type="image_analysis",
+                    details={"analyses_returned": len(analyses)},
+                    ip_address=request.client.host if request.client else None,
+                    user_agent=request.headers.get("user-agent"),
+                )
                 return analyses
     except Exception:
         raise HTTPException(

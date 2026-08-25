@@ -1,3 +1,13 @@
+"""Reads the pipeline's JSON outputs and yields the searchable text records
+that get embedded into Qdrant.
+
+Field selection: messages.text, OCR transcript_text, audio transcript text,
+image heuristic context, and above-threshold CLIP evidence tags -- these are
+the only free-text fields the pipeline produces; everything else
+(dimensions, hashes, timestamps) is structured metadata, not something worth
+a semantic embedding.
+"""
+
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -7,12 +17,15 @@ BACKEND_DIR = Path(__file__).resolve().parents[1]
 
 OCR_SKIP_MARKER = "[OCR Skipped"
 
+# Mirrors image_extractor.py's TAG_CONFIDENCE_THRESHOLD (defined there but not
+# currently applied in that file) -- duplicated here rather than imported so
+# this module has no coupling to the extraction pipeline's internals.
 TAG_CONFIDENCE_THRESHOLD = 0.25
 
 
 @dataclass
 class SearchableRecord:
-    source_type: str          # message | ocr_document | audio_transcript | image_context | image_tags | image_ocr
+    source_type: str          # message | ocr_document | audio_transcript | image_context | image_tags
     source_table: str         # PostgreSQL table this content ultimately lands in
     business_id: str          # UFDR-level id (message_id or media_id)
     media_id: Optional[str]
@@ -43,13 +56,6 @@ def extract_records(backend_dir: Path = BACKEND_DIR) -> list[SearchableRecord]:
     ocr = _load(backend_dir / "ocr_output.json")
     transcripts = _load(backend_dir / "transcripts_output.json")
     image_analysis = _load(backend_dir / "image_analysis_output.json")
-    translated = _load(backend_dir / "translated_output.json")
-
-    translated_by_media = {
-        doc["media_id"]: doc["final_english"].strip()
-        for doc in translated.get("documents", [])
-        if doc.get("media_id") and (doc.get("final_english") or "").strip()
-    }
 
     records: list[SearchableRecord] = []
 
@@ -71,18 +77,16 @@ def extract_records(backend_dir: Path = BACKEND_DIR) -> list[SearchableRecord]:
         ))
 
     for doc in ocr.get("documents", []):
-        raw_text = (doc.get("transcript_text") or "").strip()
-        if not raw_text or raw_text.startswith(OCR_SKIP_MARKER):
+        text = (doc.get("transcript_text") or "").strip()
+        if not text or text.startswith(OCR_SKIP_MARKER):
             continue
-        translated_text = translated_by_media.get(doc["media_id"])
-        text = translated_text or raw_text
         records.append(SearchableRecord(
             source_type="ocr_document",
             source_table="ocr_results",
             business_id=doc["media_id"],
             media_id=doc["media_id"],
             text=text,
-            metadata={"filename": doc.get("filename"), "translated": bool(translated_text)},
+            metadata={"filename": doc.get("filename")},
         ))
 
     for tr in transcripts.get("transcripts", []):
@@ -113,19 +117,6 @@ def extract_records(backend_dir: Path = BACKEND_DIR) -> list[SearchableRecord]:
                     "face_count": img.get("face_count"),
                     "image_metadata": img.get("metadata"),
                 },
-            ))
-
-        ocr_text_raw = (img.get("ocr_text") or "").strip()
-        if ocr_text_raw and not ocr_text_raw.startswith(OCR_SKIP_MARKER):
-            translated_text = translated_by_media.get(media_id)
-            text = translated_text or ocr_text_raw
-            records.append(SearchableRecord(
-                source_type="image_ocr",
-                source_table="ocr_results",
-                business_id=media_id,
-                media_id=media_id,
-                text=text,
-                metadata={"translated": bool(translated_text)},
             ))
 
         tags = {
