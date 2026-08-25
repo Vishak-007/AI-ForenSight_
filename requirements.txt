@@ -13,10 +13,13 @@ transformers
 fastapi
 uvicorn
 python-multipart
+
 # Forensic Video Analysis pipeline (process_video.py)
 ultralytics
 easyocr
 imageio-ffmpeg
+
+# Vector DB
 qdrant-client
 sentence-transformers==3.0.1
 

@@ -1,82 +1,88 @@
-# AI-ForenSight
+# AI-ForenSight: Multi-Modal Forensic Extraction & Video Analysis Pipeline
 
-A pipeline for pulling structured data out of UFDR (Universal Forensic Data Extraction Report) exports — messages, calls, contacts, media — running local analysis on top of it, and serving the result through an API a frontend can actually use. Everything analysis-related runs on your machine; nothing gets uploaded to a third party.
+AI-ForenSight is an offline, local digital forensics analysis pipeline and investigation dashboard for UFDR (Universal Forensic Data Extraction Report) packages and multi-modal digital evidence (documents, images, audio, and video). Everything runs locally without uploading data to third-party services.
 
-## How the pieces fit together
+---
 
-Everything under `backend/` is one pipeline, each stage reading the previous stage's JSON and writing its own:
+## Capabilities & Architecture
 
-1. `parser.py` — turns `report.xml` + its `media/` folder into `parsed_output.json` (messages, calls, contacts, and a per-media record with technical metadata and a SHA-256 hash for tamper detection).
-2. `ocr_transcribe.py` — OCRs any document/PDF media with Tesseract, writes `ocr_output.json`.
-3. `transcribe.py` — transcribes any audio media locally with Whisper, writes `transcripts_output.json`.
-4. `image_extractor.py` — face detection/clustering (YuNet + SFace) and CLIP-based evidence tagging on image media, writes `image_analysis_output.json`.
-5. `process_video.py` — multi-modal forensic video analysis (metadata, audio speech transcription, YOLOv8 object detection, EasyOCR on-screen text, scene classification, unified chronological timeline), writes `video_analysis_output.json`.
-6. `import_data.py` — upserts all of the above into Postgres.
-7. `backend/vector_db` — embeds the case's free text (messages, OCR text, transcripts, image tags/context) with a local sentence-transformer and indexes it into Qdrant, so `python -m backend.vector_db.search "some query"` does real semantic search over a case.
+1. **UFDR Parsing & Integrity Hashing**: `parser.py` extracts messages, calls, contacts, and media with SHA-256 integrity hashing for tamper detection.
+2. **Document OCR**: `ocr_transcribe.py` extracts embedded text across PDFs and images with Tesseract.
+3. **Audio Transcription**: `transcribe.py` runs local Whisper speech-to-text with timestamping.
+4. **Facial Detection & Visual Tagging**: `image_extractor.py` performs face detection/clustering (YuNet + SFace) and CLIP zero-shot forensic evidence tagging.
+5. **Forensic Video Analysis**: `process_video.py` performs keyframe extraction, YOLOv8 object detection, EasyOCR on-screen text extraction, Faster-Whisper audio dialogue transcription, and contextual scene inference.
+6. **Data Storage & Audit Trails**: `import_data.py` & `backend/database/` store structured data and immutable hash-chained audit logs in PostgreSQL.
+7. **Semantic Vector Search**: `backend/vector_db` indexes extracted forensic data into Qdrant vector database for natural language semantic search.
+8. **Interactive UI**: `frontend/forensics-workflow-main` React/Vite dashboard for case uploading, timeline exploration, media inspection, and audit history.
 
-`run_pipeline.py` runs stages 1–5, 6, and 7 in order, and only imports into Postgres if every extraction stage actually produced output.
-
-Sitting on top of that, `main.py` is a FastAPI app (`backend/routes/`) exposing the Postgres data over REST — cases, devices, contacts, messages, calls, media, OCR results, transcriptions, image analysis, image tags, immutable audit logs (`/api/audit-logs`, `/api/audit-logs/verify`) — plus an upload endpoint that accepts a UFDR zip, extracts it, and runs the whole pipeline against it in the background.
-
-`frontend/forensics-workflow-main` is a React/Vite app that talks to that API: upload a case, poll its processing status, and once it's done, browse the assembled report.
-
-There's also a `translate.py` at the repo root (with its `translation/` package) that converts Tanglish/code-mixed Tamil OCR text into fluent English via a local NLP pipeline (NER protection, transliteration, NLLB, grammar correction). Worth flagging: it isn't wired into `run_pipeline.py`, `import_data.py`, or the vector index yet — it's a standalone script you run by hand, and it lives at the project root while the JSON it reads (`ocr_output.json`) lives in `backend/`, so you currently have to run it with `backend/` as your working directory despite the script itself sitting one level up. That's a real gap, not a design choice — happy to wire it into the pipeline properly if it's needed.
+---
 
 ## Setup
 
-**Python dependencies** (from the repo root):
+**1. Install Python Dependencies** (from repo root):
 ```bash
 pip install -r requirements.txt
 ```
 
-**Tesseract OCR** — install it and make sure it's on your PATH, or at the default Windows location `C:\Program Files\Tesseract-OCR\tesseract.exe`. Without it, `ocr_transcribe.py` still runs but writes a placeholder string instead of real text.
+**2. Tesseract OCR**
+Make sure Tesseract is installed and on your PATH (or standard Windows location `C:\Program Files\Tesseract-OCR\tesseract.exe`).
 
-**spaCy's English model** (only needed for `translate.py`'s entity protection step):
-```bash
-python -m spacy download en_core_web_sm
-```
-
-**Postgres and Qdrant.** Easiest is Docker:
+**3. Postgres and Qdrant** (Docker recommended):
 ```bash
 docker run -d --name ufdr-postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=123456 -e POSTGRES_DB=ufdr_forensics -p 5432:5432 postgres:16
 docker run -d --name ufdr-qdrant -p 6333:6333 qdrant/qdrant
 ```
-Then put the Postgres connection details in a `.env` file (repo root, or `backend/.env` — either is read) defining `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`. Qdrant defaults to `localhost:6333` and doesn't need any env vars unless you're pointing it somewhere else. The database schema (`cases`, `messages`, `media`, etc.) creates itself automatically the first time `main.py` starts — no manual migration step.
 
-`image_extractor.py` also downloads a couple of small ONNX face models and the CLIP checkpoint the first time it needs them, and `translate.py` downloads its NLLB/grammar-correction models the first time too — all cached locally after that first run, no further network needed.
-
-## Running it
-
-**Through the API (the real path):** start the backend, then either use the frontend or curl the upload endpoint directly.
-```bash
-python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000
+Configure `.env` with:
+```env
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_NAME=ufdr_forensics
+DB_USER=postgres
+DB_PASSWORD=123456
 ```
-```bash
-curl -X POST http://127.0.0.1:8000/api/cases/upload -F "case_name=My Case" -F "file=@case.zip"
-curl http://127.0.0.1:8000/api/cases/upload/status/<job_id>   # poll until status is "completed"
-```
-The status response includes the Postgres `case_id` once the pipeline finishes, and every `/api/*` endpoint takes `?case_id=` to fetch that case's data.
 
-**Frontend:**
+---
+
+## Running the Application
+
+### Option A: Using Startup Scripts (Windows)
+Double-click or run:
+```bat
+start-all.bat
+```
+Or start individually:
+```bat
+start-backend.bat
+start-frontend.bat
+```
+
+### Option B: Manual CLI
+
+**Start Backend (FastAPI):**
+```bash
+python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload
+```
+
+**Start Frontend:**
 ```bash
 cd frontend/forensics-workflow-main
 npm install
 npm run dev
 ```
-It expects the API at `http://127.0.0.1:8000` by default (`VITE_API_BASE_URL` in its `.env`).
 
-**By hand, stage by stage** (useful for debugging one stage without the others). The four extraction scripts use relative paths and expect to run from inside `backend/`; `import_data` and `vector_db.index` are invoked as packages (`-m backend...`) so they need the repo root as your working directory instead:
+---
+
+## Standalone Video Analysis
+
+Analyze any video directly:
 ```bash
-cd backend
-python parser.py --input-dir sample_ufdr
-python ocr_transcribe.py --input-dir sample_ufdr
-python transcribe.py --input-dir sample_ufdr
-python image_extractor.py --input-dir sample_ufdr
-cd ..
-python -m backend.import_data --case-name "My Case" --source-file backend/sample_ufdr/report.xml --parsed backend/parsed_output.json --ocr backend/ocr_output.json --transcripts backend/transcripts_output.json --image-analysis backend/image_analysis_output.json
-python -m backend.vector_db.index
+python process_video.py sample_ufdr/media/video.mp4 video_analysis_output.json
 ```
 
-## Where things stand
-
-Video isn't handled yet — `parser.py` records it as seen-but-skipped. `translate.py` works but isn't part of the automated pipeline, as noted above. The CLIP confidence threshold in `image_extractor.py` hasn't been calibrated against real evidentiary photos, so treat those tags as a starting point for review, not a verdict. The frontend's login is a local-only mock with no real backend auth — don't rely on it for anything sensitive. And the pipeline processes one case at a time by design: concurrent uploads would race on the same intermediate JSON files rather than each getting isolated output.
+**CLI Arguments:**
+- `video_path`: Path to input video file
+- `-o, --output`: Path to output JSON file (default: `video_analysis_output.json`)
+- `--sample_fps`: Frames per second to sample for visual detection and OCR (default: `1.0`)
+- `--whisper_model`: Whisper model size (`tiny`, `base`, `small`, `medium`, `large-v3`)
+- `--yolo_model`: YOLO model weights (default: `yolov8n.pt`)
