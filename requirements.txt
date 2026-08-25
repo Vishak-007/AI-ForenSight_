@@ -13,6 +13,7 @@ transformers
 fastapi
 uvicorn
 python-multipart
+# Forensic Video Analysis pipeline (process_video.py)
 ultralytics
 easyocr
 imageio-ffmpeg

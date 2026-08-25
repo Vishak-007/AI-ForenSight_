@@ -17,7 +17,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict
 
-from fastapi import APIRouter, BackgroundTasks, File, Form, HTTPException, UploadFile, status
+from fastapi import APIRouter, BackgroundTasks, File, Form, HTTPException, Request, UploadFile, status
+
+try:
+    from ..database.audit import log_audit_event
+except ImportError:
+    from database.audit import log_audit_event
 
 
 BACKEND_DIR = Path(__file__).resolve().parents[1]
@@ -65,22 +70,43 @@ def run_pipeline_background(job_id: str, case_name: str, report_xml_path: Path):
 
         if result.returncode == 0:
             case_id_match = re.search(r"^CASE_ID=(\d+)$", result.stdout or "", re.MULTILINE)
-            JOBS[job_id]["case_id"] = int(case_id_match.group(1)) if case_id_match else None
+            extracted_case_id = int(case_id_match.group(1)) if case_id_match else None
+            JOBS[job_id]["case_id"] = extracted_case_id
             JOBS[job_id]["status"] = "completed"
             JOBS[job_id]["completed_at"] = datetime.now(timezone.utc).isoformat()
+            
+            # Log successful forensic ingestion
+            log_audit_event(
+                case_id=extracted_case_id,
+                action="PIPELINE_EXTRACTION_SUCCESS",
+                resource_type="case",
+                resource_id=str(extracted_case_id) if extracted_case_id else None,
+                details={"job_id": job_id, "case_name": case_name},
+            )
         else:
             JOBS[job_id]["status"] = "failed"
             JOBS[job_id]["error_message"] = "UFDR extraction pipeline execution failed."
             JOBS[job_id]["completed_at"] = datetime.now(timezone.utc).isoformat()
-    except Exception:
+            log_audit_event(
+                action="PIPELINE_EXTRACTION_FAILED",
+                resource_type="case",
+                details={"job_id": job_id, "case_name": case_name, "error": "Process returned non-zero exit code"},
+            )
+    except Exception as exc:
         JOBS[job_id]["status"] = "failed"
         JOBS[job_id]["error_message"] = "An error occurred while launching background pipeline."
         JOBS[job_id]["completed_at"] = datetime.now(timezone.utc).isoformat()
+        log_audit_event(
+            action="PIPELINE_EXTRACTION_ERROR",
+            resource_type="case",
+            details={"job_id": job_id, "case_name": case_name, "error": str(exc)},
+        )
 
 
 @router.post("", status_code=status.HTTP_202_ACCEPTED)
 @router.post("/", status_code=status.HTTP_202_ACCEPTED)
 async def upload_ufdr_case(
+    request: Request,
     background_tasks: BackgroundTasks,
     case_name: str = Form(..., description="Name for the forensic case"),
     file: UploadFile = File(..., description="ZIP archive containing UFDR package"),
@@ -168,6 +194,14 @@ async def upload_ufdr_case(
         job_id,
         case_name.strip(),
         report_xml_path,
+    )
+
+    log_audit_event(
+        action="CASE_UPLOAD_INITIATED",
+        resource_type="case",
+        details={"job_id": job_id, "case_name": case_name.strip(), "archive_filename": file.filename},
+        ip_address=request.client.host if request.client else None,
+        user_agent=request.headers.get("user-agent"),
     )
 
     return {

@@ -6,16 +6,17 @@ A pipeline for pulling structured data out of UFDR (Universal Forensic Data Extr
 
 Everything under `backend/` is one pipeline, each stage reading the previous stage's JSON and writing its own:
 
-1. `parser.py` — turns `report.xml` + its `media/` folder into `parsed_output.json` (messages, calls, contacts, and a per-media record with a SHA-256 hash for tamper detection).
+1. `parser.py` — turns `report.xml` + its `media/` folder into `parsed_output.json` (messages, calls, contacts, and a per-media record with technical metadata and a SHA-256 hash for tamper detection).
 2. `ocr_transcribe.py` — OCRs any document/PDF media with Tesseract, writes `ocr_output.json`.
 3. `transcribe.py` — transcribes any audio media locally with Whisper, writes `transcripts_output.json`.
 4. `image_extractor.py` — face detection/clustering (YuNet + SFace) and CLIP-based evidence tagging on image media, writes `image_analysis_output.json`.
-5. `import_data.py` — upserts all of the above into Postgres.
-6. `backend/vector_db` — embeds the case's free text (messages, OCR text, transcripts, image tags/context) with a local sentence-transformer and indexes it into Qdrant, so `python -m backend.vector_db.search "some query"` does real semantic search over a case.
+5. `process_video.py` — multi-modal forensic video analysis (metadata, audio speech transcription, YOLOv8 object detection, EasyOCR on-screen text, scene classification, unified chronological timeline), writes `video_analysis_output.json`.
+6. `import_data.py` — upserts all of the above into Postgres.
+7. `backend/vector_db` — embeds the case's free text (messages, OCR text, transcripts, image tags/context) with a local sentence-transformer and indexes it into Qdrant, so `python -m backend.vector_db.search "some query"` does real semantic search over a case.
 
-`run_pipeline.py` runs stages 1–4, 5, and 6 in order, and only imports into Postgres if every extraction stage actually produced output.
+`run_pipeline.py` runs stages 1–5, 6, and 7 in order, and only imports into Postgres if every extraction stage actually produced output.
 
-Sitting on top of that, `main.py` is a FastAPI app (`backend/routes/`) exposing the Postgres data over REST — cases, devices, contacts, messages, calls, media, OCR results, transcriptions, image analysis, image tags — plus an upload endpoint that accepts a UFDR zip, extracts it, and runs the whole pipeline against it in the background.
+Sitting on top of that, `main.py` is a FastAPI app (`backend/routes/`) exposing the Postgres data over REST — cases, devices, contacts, messages, calls, media, OCR results, transcriptions, image analysis, image tags, immutable audit logs (`/api/audit-logs`, `/api/audit-logs/verify`) — plus an upload endpoint that accepts a UFDR zip, extracts it, and runs the whole pipeline against it in the background.
 
 `frontend/forensics-workflow-main` is a React/Vite app that talks to that API: upload a case, poll its processing status, and once it's done, browse the assembled report.
 

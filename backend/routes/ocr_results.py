@@ -6,7 +6,7 @@ Supports filtering by case_id via JOIN with media.
 """
 
 from typing import Optional
-from fastapi import APIRouter, HTTPException, Query, status
+from fastapi import APIRouter, HTTPException, Query, Request, status
 from psycopg.rows import dict_row
 
 try:
@@ -14,13 +14,21 @@ try:
 except ImportError:
     from database.connection import get_connection
 
+try:
+    from ..database.audit import log_audit_event
+except ImportError:
+    from database.audit import log_audit_event
+
 
 router = APIRouter(prefix="/api/ocr-results", tags=["ocr-results"])
 
 
 @router.get("", status_code=status.HTTP_200_OK)
 @router.get("/", status_code=status.HTTP_200_OK)
-def get_ocr_results(case_id: Optional[int] = Query(None, description="Optional case ID to filter OCR results")):
+def get_ocr_results(
+    request: Request,
+    case_id: Optional[int] = Query(None, description="Optional case ID to filter OCR results"),
+):
     """
     Retrieve OCR text extraction records from the PostgreSQL database.
     Optionally filter by case_id via JOIN with media table.
@@ -40,6 +48,15 @@ def get_ocr_results(case_id: Optional[int] = Query(None, description="Optional c
                         "SELECT id, media_id, text FROM ocr_results ORDER BY id ASC;"
                     )
                 ocr_records = cursor.fetchall()
+                
+                log_audit_event(
+                    case_id=case_id,
+                    action="OCR_RESULTS_VIEWED",
+                    resource_type="ocr",
+                    details={"ocr_records_returned": len(ocr_records)},
+                    ip_address=request.client.host if request.client else None,
+                    user_agent=request.headers.get("user-agent"),
+                )
                 return ocr_records
     except Exception:
         raise HTTPException(

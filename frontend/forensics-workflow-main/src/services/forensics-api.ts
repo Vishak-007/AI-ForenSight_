@@ -647,3 +647,83 @@ export async function getReportData(caseId: string | number): Promise<ReportData
   }
 }
 
+/* --------------------------- Audit Logs Services --------------------------- */
+
+export interface AuditLogRecord {
+  id: number;
+  case_id: number | null;
+  user_id: string;
+  action: string;
+  resource_type: string | null;
+  resource_id: string | null;
+  details: Record<string, any> | string | null;
+  ip_address: string | null;
+  user_agent: string | null;
+  timestamp: string;
+  prev_log_hash: string;
+  entry_hash: string;
+}
+
+export interface AuditVerificationResult {
+  status: "verified" | "corrupted" | "valid";
+  total_entries: number;
+  message: string;
+  corrupted_at_id?: number;
+  reason?: string;
+  expected_prev_hash?: string;
+  found_prev_hash?: string;
+}
+
+export async function getAuditLogs(params?: {
+  caseId?: number | null;
+  userId?: string;
+  action?: string;
+  limit?: number;
+  offset?: number;
+}): Promise<{ total: number; logs: AuditLogRecord[] }> {
+  try {
+    const url = new URL(`${API_BASE_URL}/api/audit-logs`);
+    if (params?.caseId != null) url.searchParams.append("case_id", String(params.caseId));
+    if (params?.userId) url.searchParams.append("user_id", params.userId);
+    if (params?.action) url.searchParams.append("action", params.action);
+    if (params?.limit !== undefined) url.searchParams.append("limit", String(params.limit));
+    if (params?.offset !== undefined) url.searchParams.append("offset", String(params.offset));
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: { Accept: "application/json" },
+    });
+
+    if (!response.ok) {
+      throw new ForensicsApiError("Failed to fetch audit log history from server.");
+    }
+
+    const data = await response.json();
+    return {
+      total: data.total || 0,
+      logs: Array.isArray(data.logs) ? data.logs : [],
+    };
+  } catch (error) {
+    if (error instanceof ForensicsApiError) throw error;
+    throw new ForensicsApiError("Unable to connect to audit logs endpoint.");
+  }
+}
+
+export async function verifyAuditTrail(): Promise<AuditVerificationResult> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/audit-logs/verify`, {
+      method: "GET",
+      headers: { Accept: "application/json" },
+    });
+
+    if (!response.ok) {
+      throw new ForensicsApiError("Audit trail cryptographic verification request failed.");
+    }
+
+    return await response.json();
+  } catch (error) {
+    if (error instanceof ForensicsApiError) throw error;
+    throw new ForensicsApiError("Unable to reach audit verification service.");
+  }
+}
+

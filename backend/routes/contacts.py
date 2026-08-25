@@ -6,7 +6,7 @@ Supports filtering by case_id.
 """
 
 from typing import Optional
-from fastapi import APIRouter, HTTPException, Query, status
+from fastapi import APIRouter, HTTPException, Query, Request, status
 from psycopg.rows import dict_row
 
 try:
@@ -14,13 +14,21 @@ try:
 except ImportError:
     from database.connection import get_connection
 
+try:
+    from ..database.audit import log_audit_event
+except ImportError:
+    from database.audit import log_audit_event
+
 
 router = APIRouter(prefix="/api/contacts", tags=["contacts"])
 
 
 @router.get("", status_code=status.HTTP_200_OK)
 @router.get("/", status_code=status.HTTP_200_OK)
-def get_contacts(case_id: Optional[int] = Query(None, description="Optional case ID to filter contacts")):
+def get_contacts(
+    request: Request,
+    case_id: Optional[int] = Query(None, description="Optional case ID to filter contacts"),
+):
     """
     Retrieve contact records from the PostgreSQL database.
     Optionally filter by case_id.
@@ -40,6 +48,15 @@ def get_contacts(case_id: Optional[int] = Query(None, description="Optional case
                         "FROM contacts ORDER BY id ASC;"
                     )
                 contacts = cursor.fetchall()
+                
+                log_audit_event(
+                    case_id=case_id,
+                    action="CONTACTS_VIEWED",
+                    resource_type="contact",
+                    details={"contacts_returned": len(contacts)},
+                    ip_address=request.client.host if request.client else None,
+                    user_agent=request.headers.get("user-agent"),
+                )
                 return contacts
     except Exception:
         raise HTTPException(
