@@ -1,32 +1,3 @@
-"""
-UFDR parser prototype.
-
-Input:  a UFDR-style XML export (report.xml) + its media folder.
-Output: a single normalized JSON file containing every record type,
-        with media records enriched by type-specific metadata and a
-        SHA-256 hash (so tampering can be detected later — this is the
-        "evidentiary integrity" hook, cheap to add now, expensive to
-        bolt on later).
-
-Two XML schemas are recognized, both normalized down to the same output
-shape so nothing downstream needs to know which one was used:
-
-- <ufdr_report> — this project's own schema (see sample_ufdr/report.xml):
-  flat top-level <messages>, <calls>, <contacts>, <media> lists.
-- <report version="..."> — a Cellebrite-style export: <metadata> instead
-  of <device_info>, <calls> as attributes (type="Incoming"/"Outgoing" +
-  a single counterpart `number`), and messages nested per-app inside
-  <chats><chat><message sender=".."><attachment type="..">path</attachment>
-  rather than flat top-level lists. extract_report_schema() flattens the
-  chat messages and pulls their inline attachments out as media records.
-
-Supported media types right now: image, audio, document.
-Video is intentionally NOT handled yet — see the `video` branch below,
-which just records that it was seen and skipped. Wiring it up later is
-the same pattern as audio, just with a video-specific metadata reader
-(e.g. moviepy or ffprobe) instead of `wave`.
-"""
-
 import argparse
 import xmltodict
 import json
@@ -139,11 +110,6 @@ def parse_media_item(item):
 
 
 def extract_report_schema(report):
-    """Parses the Cellebrite-style <report version=".."> schema and returns
-    (device_info, messages, calls, contacts, media_raw) in the same shape
-    extract from <ufdr_report> below, so main() can treat both identically
-    from here on.
-    """
     metadata = report.get("metadata") or {}
     device_info = {
         "device_id": metadata.get("case_number") or metadata.get("device_name") or "UNKNOWN_DEVICE",
@@ -169,17 +135,13 @@ def extract_report_schema(report):
             "type": call_type or None,
         })
 
-    # Messages live nested per-app inside <chats><chat><message>, with
-    # attachments inline on the message rather than a flat top-level list --
-    # flatten both out here.
+
     messages = []
     media_raw = []
     media_counter = 0
 
     for chat in as_list((report.get("chats") or {}).get("chat")):
         chat_messages = as_list(chat.get("message"))
-        # The counterpart's number is never stated separately -- infer it as
-        # whichever sender in this chat isn't the device owner ("self").
         counterpart = next(
             (m.get("@sender") for m in chat_messages if m.get("@sender") and m.get("@sender") != "self"),
             None,
